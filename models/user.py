@@ -1,12 +1,12 @@
 from mongoengine import Document, StringField, DateTimeField
 from datetime import datetime
 
-class user(Document):
-    name = StringField(required=True, unique=True)
+class User(Document):
+    name = StringField(required=True, unique=True, max_length=64)
     sex = StringField(required=True, choices=('male', 'female'))
     date_of_birth = DateTimeField(required=True)
     phone_code = StringField(required=True)
-    phone_number = StringField(required=True, unique=True)
+    phone_number = StringField(required=True, unique=True, max_length=16)
     api_key = StringField(required=True, unique=True)
     status = StringField(default='active', choices=('active', 'suspend'))
     role = StringField(default='user', choices=('user', 'admin'))

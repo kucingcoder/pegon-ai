@@ -1,7 +1,7 @@
 from mongoengine import Document, StringField, DateTimeField
 from datetime import datetime
 
-class article(Document):
+class Article(Document):
     name = StringField(required=True, unique=True)
     writer = StringField(required=True)
     file = StringField(required=True)
