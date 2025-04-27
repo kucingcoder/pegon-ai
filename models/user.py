@@ -1,5 +1,5 @@
 from mongoengine import Document, StringField, DateTimeField
-from datetime import datetime
+from datetime import datetime, timezone
 
 class User(Document):
     name = StringField(required=True, unique=True, max_length=64)
@@ -10,7 +10,11 @@ class User(Document):
     api_key = StringField(required=True, unique=True)
     status = StringField(default='active', choices=('active', 'suspend'))
     role = StringField(default='user', choices=('user', 'admin'))
-    created_at = DateTimeField(default=datetime.now(datetime.timezone.utc))
-    updated_at = DateTimeField(default=datetime.now(datetime.timezone.utc))
+    created_at = DateTimeField(default=lambda: datetime.now(timezone.utc))
+    updated_at = DateTimeField(default=lambda: datetime.now(timezone.utc))
     
     meta = {'collection': 'users'}
+
+    def save(self, *args, **kwargs):
+        self.updated_at = datetime.now(timezone.utc)
+        return super(User, self).save(*args, **kwargs)
