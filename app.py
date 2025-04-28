@@ -1,7 +1,10 @@
 import os
 from dotenv import load_dotenv
 from urllib.parse import quote
+from flask import Flask
+from flask_jwt_extended import JWTManager
 from mongoengine import connect
+from controllers import user_bp, otp_bp
 
 folders = [
     "storage",
@@ -37,3 +40,19 @@ try:
     connect(db=MONGODB_DATABASE, host=connection_string)
 except Exception as e:
     exit(e)
+
+app = Flask(__name__)
+app.config['JWT_SECRET_KEY'] = APP_KEY
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = False
+
+jwt = JWTManager(app)
+
+app.register_blueprint(user_bp, url_prefix='/api/user')
+app.register_blueprint(otp_bp, url_prefix='/api/otp')
+
+@app.route('/')
+def index():
+    return {'message': 'API berjalan dengan baik!'}
+
+if __name__ == '__main__':
+    app.run()
