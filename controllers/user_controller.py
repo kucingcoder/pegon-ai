@@ -164,8 +164,8 @@ def login():
     ), 200
 
 @user_bp.route('/profile', methods=['GET'])
-@require_api_key()
 @jwt_required()
+@require_api_key()
 def profile():
     current_user = get_jwt_identity()
     user = User.objects(id=current_user).first()
@@ -185,8 +185,8 @@ def profile():
     ), 200
 
 @user_bp.route('/profile-update', methods=['POST'])
-@require_api_key()
 @jwt_required()
+@require_api_key()
 def profile_update():
     data = request.get_json()
 
