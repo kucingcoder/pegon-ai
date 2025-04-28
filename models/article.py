@@ -5,6 +5,8 @@ class Article(Document):
     name = StringField(required=True, unique=True)
     writer = StringField(required=True)
     file = StringField(required=True)
+    thumbnail = StringField(required=True)
+    description = StringField(required=True)
     created_at = DateTimeField(default=lambda: datetime.now(timezone.utc))
     updated_at = DateTimeField(default=lambda: datetime.now(timezone.utc))
 
