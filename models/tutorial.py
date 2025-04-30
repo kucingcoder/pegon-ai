@@ -1,17 +1,16 @@
 from mongoengine import Document, StringField, DateTimeField
 from datetime import datetime, timezone
 
-class Article(Document):
+class Tutorial(Document):
     name = StringField(required=True, unique=True)
-    writer = StringField(required=True)
-    file = StringField(required=True)
     thumbnail = StringField(required=True)
     description = StringField(required=True)
+    link = StringField(required=True)
     created_at = DateTimeField(default=lambda: datetime.now(timezone.utc))
     updated_at = DateTimeField(default=lambda: datetime.now(timezone.utc))
 
-    meta = {'collection': 'articles'}
+    meta = {'collection': 'tutorials'}
 
     def save(self, *args, **kwargs):
         self.updated_at = datetime.now(timezone.utc)
-        return super(Article, self).save(*args, **kwargs)
+        return super(Tutorial, self).save(*args, **kwargs)
