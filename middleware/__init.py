@@ -1,1 +1,2 @@
 from middleware.require_api_key import require_api_key
+from middleware.admin_only import admin_only
