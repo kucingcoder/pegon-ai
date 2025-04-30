@@ -9,7 +9,7 @@ def send_wa(phone_number, verification_code):
 
     try:
         requests.post(
-            KIRIMKAN_URL + '/kirim-pesan', 
+            KIRIMKAN_URL + '/send-message', 
             json = {
                 'number' : phone_number,
                 'message': message,
