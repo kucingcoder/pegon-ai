@@ -4,7 +4,7 @@ from urllib.parse import quote
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from mongoengine import connect
-from controllers import user_bp, otp_bp, tutorial_bp, transliterate_bp
+from controllers import user_bp, otp_bp, tutorial_bp, transliterate_bp, visualization_bp
 from utils import update_big_data
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -54,10 +54,13 @@ app.register_blueprint(user_bp, url_prefix='/api/user')
 app.register_blueprint(otp_bp, url_prefix='/api/otp')
 app.register_blueprint(tutorial_bp, url_prefix='/api/tutorial')
 app.register_blueprint(transliterate_bp, url_prefix='/api/transliterate')
+app.register_blueprint(visualization_bp, url_prefix='/api/visualization')
 
 @app.route('/')
 def index():
     return {'message': 'API berjalan dengan baik!'}
+
+update_big_data()
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(update_big_data, 'cron', hour=0, minute=0)

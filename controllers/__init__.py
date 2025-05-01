@@ -2,3 +2,4 @@ from controllers.user_controller import user_bp
 from controllers.otp_controller import otp_bp
 from controllers.tutorial_controller import tutorial_bp
 from controllers.transliterate_controller import transliterate_bp
+from controllers.visualization_controller import visualization_bp

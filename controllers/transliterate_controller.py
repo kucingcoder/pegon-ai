@@ -3,9 +3,7 @@ import os
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask import Blueprint, request, jsonify
 from middleware.require_api_key import require_api_key
-from middleware.admin_only import admin_only
 from datetime import datetime, timezone
-from models.user import User
 from utils import to_webp
 from models.history import History
 
