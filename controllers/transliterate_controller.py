@@ -70,18 +70,7 @@ def get_image_history_by_id(id):
 @transliterate_bp.route('/image-to-text', methods=['POST'])
 @require_api_key()
 @jwt_required()
-def image_to_text():
-    current_user = get_jwt_identity()
-
-    user = User.objects(id=current_user).first()
-
-    if not user:
-        return jsonify({
-            'code': 401,
-            'status': 'unauthorized',
-            'message': 'you are not authorized to access this resource'
-        }), 401
-    
+def image_to_text():    
     if 'image' not in request.files or request.files['image'].filename == '':
         return jsonify({
             'code': 400,
@@ -115,7 +104,7 @@ def image_to_text():
     to_webp(input_path, output_path)
 
     history = History(
-        user_id=user.id,
+        user_id=get_jwt_identity(),
         image=output_filename,
         text='Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis dui, accumsan sit amet ornare aliquam, convallis at nunc. Suspendisse nibh elit, molestie ac mi et, ullamcorper sagittis elit. Maecenas et lacinia lectus. Aliquam sodales accumsan massa, nec sodales urna euismod quis. Pellentesque quis dolor id ex egestas porttitor tristique quis massa. Nam et quam congue, scelerisque urna ut, faucibus urna. Nam dignissim libero quis quam suscipit porta. Sed suscipit interdum ligula, at tempus metus condimentum non. Pellentesque dolor ex, varius quis nunc at, dapibus dictum turpis. Ut vehicula scelerisque quam, sed convallis elit. Duis ut venenatis augue, a auctor leo. Ut bibendum mi eu magna malesuada, sit amet interdum tortor accumsan.',
         created_at=datetime.now(timezone.utc),
@@ -136,17 +125,6 @@ def image_to_text():
 @require_api_key()
 @jwt_required()
 def text_to_text():
-    current_user = get_jwt_identity()
-
-    user = User.objects(id=current_user).first()
-
-    if not user:
-        return jsonify({
-            'code': 401,
-            'status': 'unauthorized',
-            'message': 'you are not authorized to access this resource'
-        }), 401
-    
     data = request.get_json()
     text = data.get('text')
 
