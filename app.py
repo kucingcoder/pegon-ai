@@ -8,7 +8,6 @@ from controllers import user_bp, otp_bp, tutorial_bp, transliterate_bp
 
 folders = [
     "storage",
-    "storage/docs"
     "storage/images",
     "storage/images/thumbnails",
     "storage/images/histories",

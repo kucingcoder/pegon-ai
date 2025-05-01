@@ -67,6 +67,29 @@ def get_image_history_by_id(id):
         'data': data
     }), 200
 
+@transliterate_bp.route('/history/<id>', methods=['DELETE'])
+@require_api_key()
+@jwt_required()
+def delete_image_history_by_id(id):
+    current_user = get_jwt_identity()
+    history = History.objects(user_id=current_user, id=id).first()
+    if not history:
+        return jsonify({
+            'code': 404,
+            'status': 'not found',
+            'message': 'history not found'
+        }), 404
+
+    history.delete()
+    if os.path.exists(os.path.join('storage/images/histories', history.image)):
+        os.remove(os.path.join('storage/images/histories', history.image))
+
+    return jsonify({
+        'code': 200,
+        'status': 'ok',
+        'message': 'history deleted successfully'
+    }), 200
+
 @transliterate_bp.route('/image-to-text', methods=['POST'])
 @require_api_key()
 @jwt_required()
