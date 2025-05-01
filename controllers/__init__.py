@@ -1,2 +1,3 @@
 from controllers.user_controller import user_bp
 from controllers.otp_controller import otp_bp
+from controllers.tutorial_controller import tutorial_bp

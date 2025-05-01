@@ -2,7 +2,7 @@ from mongoengine import Document, StringField, DateTimeField
 from datetime import datetime, timezone
 
 class Tutorial(Document):
-    name = StringField(required=True, unique=True)
+    name = StringField(required=True, unique=True, max_length=64)
     thumbnail = StringField(required=True)
     description = StringField(required=True)
     link = StringField(required=True)
