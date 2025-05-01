@@ -5,7 +5,7 @@ KIRIMKAN_URL = os.environ.get('KIRIMKAN_URL')
 KIRIMKAN_API_KEY = os.environ.get('KIRIMKAN_API_KEY')
 
 def send_wa(phone_number, verification_code):
-    message = f"*Pegon AI*\nYour verification code\n{verification_code}\nDon't share this code with anyone"
+    message = f"*Pegon AI*\nYour otp verification code is *{verification_code}*\nDon't share this code with anyone."
 
     try:
         requests.post(
