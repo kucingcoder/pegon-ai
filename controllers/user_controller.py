@@ -169,6 +169,16 @@ def login():
 def profile():
     current_user = get_jwt_identity()
     user = User.objects(id=current_user).first()
+
+    if not user:
+        return jsonify(
+            {
+                'code': 404,
+                'status': 'not found',
+                'message': 'user not found'
+            }
+        ), 404
+
     return jsonify(
         {
             'code': 200,
@@ -229,6 +239,15 @@ def profile_update():
         ), 400
     
     user = User.objects(id=current_user).first()
+
+    if not user:
+        return jsonify(
+            {
+                'code': 404,
+                'status': 'not found',
+                'message': 'user not found'
+            }
+        ), 404
 
     user.update(set__name=name, set__sex=sex, set__date_of_birth=date_of_birth)
     user.save()
