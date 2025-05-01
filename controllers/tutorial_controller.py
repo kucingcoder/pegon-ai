@@ -15,8 +15,6 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg'}
 
 @tutorial_bp.route('/list', methods=['GET'])
-@require_api_key()
-@jwt_required()
 def get_tutorials():
     tutorials = Tutorial.objects()
     data = []
