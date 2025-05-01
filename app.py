@@ -5,6 +5,8 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from mongoengine import connect
 from controllers import user_bp, otp_bp, tutorial_bp, transliterate_bp
+from utils import update_big_data
+from apscheduler.schedulers.background import BackgroundScheduler
 
 folders = [
     "storage",
@@ -56,6 +58,10 @@ app.register_blueprint(transliterate_bp, url_prefix='/api/transliterate')
 @app.route('/')
 def index():
     return {'message': 'API berjalan dengan baik!'}
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(update_big_data, 'cron', hour=0, minute=0)
+scheduler.start()
 
 if __name__ == '__main__':
     app.run()
