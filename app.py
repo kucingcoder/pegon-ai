@@ -4,7 +4,7 @@ from urllib.parse import quote
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from mongoengine import connect
-from controllers import user_bp, otp_bp, tutorial_bp
+from controllers import user_bp, otp_bp, tutorial_bp, transliterate_bp
 
 folders = [
     "storage",
@@ -52,6 +52,7 @@ jwt = JWTManager(app)
 app.register_blueprint(user_bp, url_prefix='/api/user')
 app.register_blueprint(otp_bp, url_prefix='/api/otp')
 app.register_blueprint(tutorial_bp, url_prefix='/api/tutorial')
+app.register_blueprint(transliterate_bp, url_prefix='/api/transliterate')
 
 @app.route('/')
 def index():

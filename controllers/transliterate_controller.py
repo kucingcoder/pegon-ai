@@ -1,0 +1,169 @@
+import hashlib
+import os
+from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask import Blueprint, request, jsonify
+from middleware.require_api_key import require_api_key
+from middleware.admin_only import admin_only
+from datetime import datetime, timezone
+from models.user import User
+from utils import to_webp
+from models.history import History
+
+transliterate_bp = Blueprint('transliterate', __name__)
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg'}
+
+@transliterate_bp.route('/history', methods=['GET'])
+@require_api_key()
+@jwt_required()
+def get_image_history():
+    current_user = get_jwt_identity()
+    history = History.objects(user_id=current_user).order_by('-created_at')
+    data = []
+    for item in history:
+        doc = item.to_mongo().to_dict()
+        data.append({
+            "id": str(doc.get("_id")),
+            "image": doc.get("image"),
+            "text": doc.get("text"),
+            "created_at": item.created_at.strftime("%d %b %Y") if item.created_at else None,
+            "updated_at": item.updated_at.strftime("%d %b %Y") if item.updated_at else None,
+        })
+
+    return jsonify({
+        'code': 200,
+        'status': 'ok',
+        'message': 'history retrieved successfully',
+        'data': data
+    }), 200
+
+@transliterate_bp.route('/history/<id>', methods=['GET'])
+@require_api_key()
+@jwt_required()
+def get_image_history_by_id(id):
+    current_user = get_jwt_identity()
+    history = History.objects(user_id=current_user, id=id).first()
+    if not history:
+        return jsonify({
+            'code': 404,
+            'status': 'not found',
+            'message': 'history not found'
+        }), 404
+
+    doc = history.to_mongo().to_dict()
+    data = {
+        "id": str(doc.get("_id")),
+        "image": doc.get("image"),
+        "text": doc.get("text"),
+        "created_at": history.created_at.strftime("%d %b %Y") if history.created_at else None,
+        "updated_at": history.updated_at.strftime("%d %b %Y") if history.updated_at else None,
+    }
+    return jsonify({
+        'code': 200,
+        'status': 'ok',
+        'message': 'history retrieved successfully',
+        'data': data
+    }), 200
+
+@transliterate_bp.route('/image-to-text', methods=['POST'])
+@require_api_key()
+@jwt_required()
+def image_to_text():
+    current_user = get_jwt_identity()
+
+    user = User.objects(id=current_user).first()
+
+    if not user:
+        return jsonify({
+            'code': 401,
+            'status': 'unauthorized',
+            'message': 'you are not authorized to access this resource'
+        }), 401
+    
+    if 'image' not in request.files or request.files['image'].filename == '':
+        return jsonify({
+            'code': 400,
+            'status': 'bad request',
+            'message': 'field image can\'t be empty'
+        }), 400
+    
+    file = request.files['image']
+    
+    if not allowed_file(file.filename):
+        return jsonify({
+            'code': 400,
+            'status': 'bad request',
+            'message': 'image must be an image (png, jpg, jpeg)'
+        }), 400
+    
+    ext = file.filename.rsplit('.', 1)[1].lower()
+
+    now_str = str(datetime.now())
+    md5_hash = hashlib.md5(now_str.encode()).hexdigest()
+    input_filename = f'temp-{md5_hash}.{ext}'
+    input_path = os.path.join('storage/images/histories', input_filename)
+
+    file.save(input_path)
+
+    # nanti lakukan image transliteration disini
+
+    output_filename = f'{md5_hash}.webp'
+    output_path = os.path.join('storage/images/histories', output_filename)
+
+    to_webp(input_path, output_path)
+
+    history = History(
+        user_id=user.id,
+        image=output_filename,
+        text='Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis dui, accumsan sit amet ornare aliquam, convallis at nunc. Suspendisse nibh elit, molestie ac mi et, ullamcorper sagittis elit. Maecenas et lacinia lectus. Aliquam sodales accumsan massa, nec sodales urna euismod quis. Pellentesque quis dolor id ex egestas porttitor tristique quis massa. Nam et quam congue, scelerisque urna ut, faucibus urna. Nam dignissim libero quis quam suscipit porta. Sed suscipit interdum ligula, at tempus metus condimentum non. Pellentesque dolor ex, varius quis nunc at, dapibus dictum turpis. Ut vehicula scelerisque quam, sed convallis elit. Duis ut venenatis augue, a auctor leo. Ut bibendum mi eu magna malesuada, sit amet interdum tortor accumsan.',
+        created_at=datetime.now(timezone.utc),
+        updated_at=datetime.now(timezone.utc)
+    )
+    history.save()
+
+    return jsonify(
+        {
+            'code': 201,
+            'status': 'created',
+            'message': 'transliteration done successfully',
+            'data': {'id': str(history.id)}
+        }
+    ), 201
+
+@transliterate_bp.route('/text-to-text', methods=['POST'])
+@require_api_key()
+@jwt_required()
+def text_to_text():
+    current_user = get_jwt_identity()
+
+    user = User.objects(id=current_user).first()
+
+    if not user:
+        return jsonify({
+            'code': 401,
+            'status': 'unauthorized',
+            'message': 'you are not authorized to access this resource'
+        }), 401
+    
+    data = request.get_json()
+    text = data.get('text')
+
+    if not text or text == "":
+        return jsonify({
+            'code': 400,
+            'status': 'bad request',
+            'message': 'field text can\'t be empty'
+        }), 400
+    
+    # nanti lakukan text transliteration disini
+
+    result = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ultrices, sem at tristique dignissim, velit metus.'
+
+    return jsonify({
+        'code': 200,
+        'status': 'ok',
+        'message': 'text transliteration done successfully',
+        'data': {'text': result}
+    }), 200
