@@ -24,15 +24,38 @@ def get_tutorials():
             "id": str(doc.get("_id")),
             "name": doc.get("name"),
             "thumbnail": doc.get("thumbnail"),
-            "description": doc.get("description"),
-            "link": doc.get("link"),
-            "created_at": tutorial.created_at.strftime("%d %b %Y") if tutorial.created_at else None,
-            "updated_at": tutorial.updated_at.strftime("%d %b %Y") if tutorial.updated_at else None,
+            "date": tutorial.updated_at.strftime("%d %b %Y") if tutorial.updated_at else None,
         })
     return jsonify({
         'code': 200,
         'status': 'ok',
         'message': 'tutorials retrieved successfully',
+        'data': data
+    }), 200
+
+@tutorial_bp.route('/detail/<id>', methods=['GET'])
+def get_tutorial(id):
+    tutorial = Tutorial.objects(id=id).first()
+    if not tutorial:
+        return jsonify({
+            'code': 404,
+            'status': 'not found',
+            'message': 'tutorial not found'
+        }), 404
+
+    doc = tutorial.to_mongo().to_dict()
+    data = {
+        "id": str(doc.get("_id")),
+        "name": doc.get("name"),
+        "description": doc.get("description"),
+        "link": doc.get("link"),
+        "thumbnail": doc.get("thumbnail"),
+        "date": tutorial.updated_at.strftime("%d %b %Y") if tutorial.updated_at else None,
+    }
+    return jsonify({
+        'code': 200,
+        'status': 'ok',
+        'message': 'tutorial retrieved successfully',
         'data': data
     }), 200
 

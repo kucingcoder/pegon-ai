@@ -25,9 +25,7 @@ def get_image_history():
         data.append({
             "id": str(doc.get("_id")),
             "image": doc.get("image"),
-            "text": doc.get("text"),
-            "created_at": item.created_at.strftime("%d %b %Y") if item.created_at else None,
-            "updated_at": item.updated_at.strftime("%d %b %Y") if item.updated_at else None,
+            "date": item.updated_at.strftime("%d %b %Y") if item.updated_at else None,
         })
 
     return jsonify({
@@ -55,8 +53,7 @@ def get_image_history_by_id(id):
         "id": str(doc.get("_id")),
         "image": doc.get("image"),
         "text": doc.get("text"),
-        "created_at": history.created_at.strftime("%d %b %Y") if history.created_at else None,
-        "updated_at": history.updated_at.strftime("%d %b %Y") if history.updated_at else None,
+        "date": history.updated_at.strftime("%d %b %Y") if history.updated_at else None,
     }
     return jsonify({
         'code': 200,
