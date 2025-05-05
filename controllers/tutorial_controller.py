@@ -1,7 +1,7 @@
 import hashlib
 import os
 from flask_jwt_extended import jwt_required
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, send_from_directory
 from middleware.require_api_key import require_api_key
 from middleware.admin_only import admin_only
 from models.tutorial import Tutorial
@@ -9,6 +9,8 @@ from datetime import datetime, timezone
 from utils import to_webp
 
 tutorial_bp = Blueprint('tutorial', __name__)
+
+APP_URL = os.environ.get('APP_URL')
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -23,7 +25,7 @@ def get_tutorials():
         data.append({
             "id": str(doc.get("_id")),
             "name": doc.get("name"),
-            "thumbnail": doc.get("thumbnail"),
+            "thumbnail": APP_URL + "/api/tutorial/thumbnail/" + doc.get("thumbnail"),
             "date": tutorial.updated_at.strftime("%d %b %Y") if tutorial.updated_at else None,
         })
     return jsonify({
@@ -32,6 +34,11 @@ def get_tutorials():
         'message': 'tutorials retrieved successfully',
         'data': data
     }), 200
+
+@tutorial_bp.route('/thumbnail/<filename>', methods=['GET'])
+def get_thumbnail(filename):
+    directory = os.path.abspath('storage/images/thumbnails')
+    return send_from_directory(directory, filename, mimetype='image/webp')
 
 @tutorial_bp.route('/detail/<id>', methods=['GET'])
 def get_tutorial(id):
@@ -49,7 +56,7 @@ def get_tutorial(id):
         "name": doc.get("name"),
         "description": doc.get("description"),
         "link": doc.get("link"),
-        "thumbnail": doc.get("thumbnail"),
+        "thumbnail": APP_URL + "/api/tutorial/thumbnail/" + doc.get("thumbnail"),
         "date": tutorial.updated_at.strftime("%d %b %Y") if tutorial.updated_at else None,
     }
     return jsonify({

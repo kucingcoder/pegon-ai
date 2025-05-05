@@ -1,13 +1,15 @@
 import hashlib
 import os
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, send_from_directory
 from middleware.require_api_key import require_api_key
 from datetime import datetime, timezone
 from utils import to_webp
 from models.history import History
 
 transliterate_bp = Blueprint('transliterate', __name__)
+
+APP_URL = os.environ.get('APP_URL')
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -24,7 +26,7 @@ def get_image_history():
         doc = item.to_mongo().to_dict()
         data.append({
             "id": str(doc.get("_id")),
-            "image": doc.get("image"),
+            "image": APP_URL + "/api/transliterate/image/" + doc.get("image"),
             "date": item.updated_at.strftime("%d %b %Y") if item.updated_at else None,
         })
 
@@ -51,7 +53,7 @@ def get_image_history_by_id(id):
     doc = history.to_mongo().to_dict()
     data = {
         "id": str(doc.get("_id")),
-        "image": doc.get("image"),
+        "image": APP_URL + "/api/transliterate/image/" + doc.get("image"),
         "text": doc.get("text"),
         "date": history.updated_at.strftime("%d %b %Y") if history.updated_at else None,
     }
@@ -61,6 +63,11 @@ def get_image_history_by_id(id):
         'message': 'history retrieved successfully',
         'data': data
     }), 200
+
+@transliterate_bp.route('/image/<filename>', methods=['GET'])
+def get_thumbnail(filename):
+    directory = os.path.abspath('storage/images/histories')
+    return send_from_directory(directory, filename, mimetype='image/webp')
 
 @transliterate_bp.route('/history/<id>', methods=['DELETE'])
 @require_api_key()

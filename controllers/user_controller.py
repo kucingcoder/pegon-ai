@@ -41,7 +41,7 @@ def register():
             {
                 'code': 400,
                 'status': 'bad request',
-                'message': 'phone number too long'
+                'message': 'whatsapp number too long'
             }
         ), 400
 
@@ -65,7 +65,7 @@ def register():
             {
                 'code': 400,
                 'status': 'bad request',
-                'message': 'phone number already exists'
+                'message': 'whatsapp number already exists'
             }
         ), 400
 
@@ -101,7 +101,7 @@ def register():
         {
             'code': 201,
             'status': 'created',
-            'message': 'registered successfully, please verify your phone number',
+            'message': 'registered successfully, please verify your whatsapp number',
             'api_key': user.api_key
         }
     ), 201
@@ -116,7 +116,7 @@ def login():
             {
                 'code': 400,
                 'status': 'bad request',
-                'message': 'phone number cant be empty'
+                'message': 'whatsapp number cant be empty'
             }
         ), 400
 
@@ -127,7 +127,7 @@ def login():
             {
                 'code': 404,
                 'status': 'not found',
-                'message': 'phone number not registered'
+                'message': 'whatsapp number not registered'
             }
         ), 404
 
@@ -158,7 +158,7 @@ def login():
         {
             'code': 200,
             'status': 'ok',
-            'message': 'login successfully, please verify your phone number',
+            'message': 'login successfully, please verify your whatsapp number',
             'api_key': user.api_key
         }
     ), 200
@@ -186,7 +186,7 @@ def profile():
             'data': {
                 'name': user.name,
                 'sex': user.sex,
-                'date_of_birth': user.date_of_birth,
+                'date_of_birth': user.date_of_birth.strftime("%Y-%m-%d") if user.date_of_birth else None,
                 'phone_code': user.phone_code,
                 'phone_number': user.phone_number
             },

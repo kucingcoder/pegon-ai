@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from urllib.parse import quote
 from flask import Flask
+from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from mongoengine import connect
 from controllers import user_bp, otp_bp, tutorial_bp, transliterate_bp, visualization_bp
@@ -45,6 +46,7 @@ except Exception as e:
     exit(e)
 
 app = Flask(__name__)
+CORS(app)
 app.config['JWT_SECRET_KEY'] = APP_KEY
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = False
 
