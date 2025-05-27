@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Statistik Satuan Pendidikan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script> <!-- d3.js -->
+    <style>
+        /* Style khusus untuk treemap */
+        #treemap {
+            width: 100%;
+            height: 400px;
+        }
+
+        .node {
+            font-size: 12px;
+            line-height: 1.1em;
+            overflow: hidden;
+            cursor: pointer;
+            border: 1px solid white;
+            box-sizing: border-box;
+            padding: 2px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-900">
+
+    <!-- Header -->
+    <div class="text-center mt-8">
+        <h1 class="text-3xl font-bold text-gray-900">
+            <span class="text-blue-600">Statistik</span> Satuan Pendidikan <span class="text-gray-900">Analysis</span>
+        </h1>
+        <p class="text-gray-600 mt-2 text-sm">
+            Statistik dan Visualisasi Data Pendidikan dari Dapodik (Sumber: <a
+                href="https://data.kemendikdasmen.go.id/data-induk/satpen" target="_blank"
+                class="text-blue-600 hover:underline">Dapodik</a>)
+        </p>
+        <div class="mt-4 flex flex-wrap justify-center gap-2">
+            <div class="bg-blue-600 text-white font-semibold py-1 px-4 rounded shadow">
+                Total Jenis Satuan Pendidikan: {{ fields|length }}
+            </div>
+            <div class="bg-gray-800 text-white text-sm py-1 px-3 rounded shadow">
+                Data Terakhir: {{ data.updated_at.strftime("%d %B %Y %H:%M") if data.updated_at else 'Tidak tersedia' }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto p-6 space-y-12">
+
+        <!-- Charts -->
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-white p-4 rounded shadow">
+                <h2 class="text-xl font-semibold mb-4">Diagram Batang</h2>
+                <canvas id="barChart"></canvas>
+            </div>
+            <div class="bg-white p-4 rounded shadow">
+                <h2 class="text-xl font-semibold mb-4">Diagram Lingkaran</h2>
+                <canvas id="pieChart"></canvas>
+            </div>
+            <div class="bg-white p-4 rounded shadow">
+                <h2 class="text-xl font-semibold mb-4">Treemap</h2>
+                <div id="treemap"></div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-white rounded-xl shadow p-6 mt-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Tabel</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 text-sm">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                Kategori</th>
+                            <th
+                                class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                Jumlah
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        {% for i in range(fields|length) %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 font-medium text-gray-800">{{ fields[i] }}</td>
+                            <td class="px-6 py-4 text-right">{{ "{:,}".format(values[i]) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center p-4 text-sm text-gray-500 mt-10">
+        &copy; 2025 Statistik Pendidikan
+    </footer>
+
+    <!-- Chart.js Script -->
+    <script>
+        const fields = {{ fields | tojson }};
+        const values = {{ values | tojson }};
+
+        // Bar Chart
+        new Chart(document.getElementById("barChart"), {
+            type: 'bar',
+            data: {
+                labels: fields,
+                datasets: [{
+                    label: 'Jumlah',
+                    data: values,
+                    backgroundColor: 'rgba(59, 130, 246, 0.7)'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: 'Statistik Satuan Pendidikan' }
+                }
+            }
+        });
+
+        // Pie Chart
+        new Chart(document.getElementById("pieChart"), {
+            type: 'pie',
+            data: {
+                labels: fields,
+                datasets: [{
+                    data: values,
+                    backgroundColor: [
+                        '#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6',
+                        '#ec4899', '#f97316', '#14b8a6', '#6366f1', '#84cc16'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: { display: true, text: 'Distribusi Satuan Pendidikan' }
+                }
+            }
+        });
+
+        // Treemap with d3.js
+        const data = {
+            name: "root",
+            children: fields.map((f, i) => ({
+                name: f,
+                value: values[i]
+            }))
+        };
+
+        const width = document.getElementById('treemap').clientWidth;
+        const height = 400;
+
+        const treemapLayout = d3.treemap()
+            .size([width, height])
+            .paddingInner(2);
+
+        const root = d3.hierarchy(data)
+            .sum(d => d.value)
+            .sort((a, b) => b.value - a.value);
+
+        treemapLayout(root);
+
+        const color = d3.scaleOrdinal()
+            .range(d3.schemeTableau10);
+
+        const container = d3.select('#treemap');
+        container.selectAll('*').remove(); // Clear if needed
+
+        const nodes = container.selectAll('div')
+            .data(root.leaves())
+            .enter()
+            .append('div')
+            .attr('class', 'node absolute')
+            .style('left', d => d.x0 + 'px')
+            .style('top', d => d.y0 + 'px')
+            .style('width', d => Math.max(0, d.x1 - d.x0) + 'px')
+            .style('height', d => Math.max(0, d.y1 - d.y0) + 'px')
+            .style('background-color', (d, i) => color(i))
+            .style('color', 'white')
+            .style('padding', '4px')
+            .style('box-sizing', 'border-box')
+            .style('font-size', '12px')
+            .style('overflow', 'hidden')
+            .text(d => d.data.name + ' (' + d3.format(',')(d.value) + ')');
+
+    </script>
+
+    <style>
+        /* position absolute untuk node di treemap container relative */
+        #treemap {
+            position: relative;
+            font-family: sans-serif;
+        }
+    </style>
+
+</body>
+
+</html>
