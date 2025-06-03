@@ -223,6 +223,7 @@ def login_with_google():
                 }
             ), 200
     except Exception as e:
+        print(f"Error in login_with_google: {str(e)}")
         return jsonify(
             {
                 'code': 500,
