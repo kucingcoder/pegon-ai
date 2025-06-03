@@ -3,10 +3,12 @@ from datetime import datetime, timezone
 
 class User(Document):
     name = StringField(required=True, unique=True, max_length=64)
-    sex = StringField(required=True, choices=('male', 'female'))
-    date_of_birth = DateTimeField(required=True)
-    phone_code = StringField(required=True)
-    phone_number = StringField(required=True, unique=True, max_length=16)
+    sex = StringField(choices=('male', 'female', 'other'))
+    date_of_birth = DateTimeField()
+    phone_code = StringField(default=None)
+    phone_number = StringField(default=None, unique=True, max_length=16)
+    google_id = StringField(default=None, unique=True, max_length=64)
+    email = StringField(default=None, unique=True, max_length=254)
     api_key = StringField(required=True, unique=True)
     status = StringField(default='active', choices=('active', 'suspend'))
     role = StringField(default='user', choices=('user', 'admin'))

@@ -1,7 +1,7 @@
 import secrets
 import random
 import threading
-from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask_jwt_extended import get_jwt_identity, jwt_required, create_access_token
 from flask import Blueprint, request, jsonify
 from middleware.require_api_key import require_api_key
 from models.user import User
@@ -76,8 +76,6 @@ def register():
         phone_code = phone_code,
         phone_number = phone_number,
         api_key = secrets.token_hex(32),
-        status = 'active',
-        role = 'user',
         created_at = datetime.now(timezone.utc),
         updated_at = datetime.now(timezone.utc)
     )
@@ -89,7 +87,6 @@ def register():
         otp = Otp(
             user_id = user,
             code = str(random.randint(1000, 9999)),
-            status = 'active',
             created_at = datetime.now(timezone.utc),
             updated_at = datetime.now(timezone.utc)
         )
@@ -146,7 +143,6 @@ def login():
         otp = Otp(
             user_id = user,
             code = str(random.randint(1000, 9999)),
-            status = 'active',
             created_at = datetime.now(timezone.utc),
             updated_at = datetime.now(timezone.utc)
         )
@@ -163,6 +159,71 @@ def login():
         }
     ), 200
 
+@user_bp.route('/login-with-google', methods=['POST'])
+def login_with_google():
+    data = request.get_json()
+
+    required_fields = ['name', 'email', 'google_id']
+    for field in required_fields:
+        if field not in data or data[field] == "":
+            return jsonify(
+                {
+                    'code': 400,
+                    'status': 'bad request',
+                    'message': f'field {field} can\'t be empty'
+                }
+            ), 400
+
+
+    if len(data['name']) > 64:
+        return jsonify(
+            {
+                'code': 400,
+                'status': 'bad request',
+                'message': 'name too long'
+            }
+        ), 400
+    
+    name = data['name'].title()
+    email = data['email']
+    google_id = data['google_id']
+
+    user = User.objects(google_id=google_id).first()
+
+    if not user:
+        user = User(
+            name = name,
+            email = email,
+            google_id = google_id,
+            api_key = secrets.token_hex(32),
+            created_at = datetime.now(timezone.utc),
+            updated_at = datetime.now(timezone.utc)
+        )
+        user.save()
+
+    if user.status != 'active':
+        return jsonify(
+            {
+                'code': 403,
+                'status': 'forbidden',
+                'message': 'user suspended'
+            }
+        ), 403
+    
+    token = create_access_token(identity=str(user.id))
+
+    return jsonify(
+            {
+                'code': 200,
+                'status': '0k',
+                'message': 'continue with google successfully',
+                'api_key': user.api_key,
+                'access_token': token
+            }
+        ), 200
+        
+    
+    
 @user_bp.route('/profile', methods=['GET'])
 @require_api_key()
 @jwt_required()
@@ -178,18 +239,30 @@ def profile():
                 'message': 'user not found'
             }
         ), 404
+    
+    data = {}
+
+    if user.google_id != None:
+        data = {
+            'email': user.email,
+            'name': user.name,
+            'sex': user.sex,
+            'date_of_birth': user.date_of_birth.strftime("%Y-%m-%d") if user.date_of_birth else None
+        }
+    else:
+        data = {
+            'phone_code': user.phone_code,
+            'phone_number': user.phone_number,
+            'name': user.name,
+            'sex': user.sex,
+            'date_of_birth': user.date_of_birth.strftime("%Y-%m-%d") if user.date_of_birth else None,
+        }
 
     return jsonify(
         {
             'code': 200,
             'status': 'ok',
-            'data': {
-                'name': user.name,
-                'sex': user.sex,
-                'date_of_birth': user.date_of_birth.strftime("%Y-%m-%d") if user.date_of_birth else None,
-                'phone_code': user.phone_code,
-                'phone_number': user.phone_number
-            },
+            'data': data,
             'api_key': user.api_key
         }
     ), 200
