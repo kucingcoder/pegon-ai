@@ -2,7 +2,7 @@ from mongoengine import Document, StringField, DateTimeField
 from datetime import datetime, timezone
 
 class User(Document):
-    name = StringField(required=True, unique=True, max_length=64)
+    name = StringField(required=True, max_length=64)
     sex = StringField(choices=('male', 'female', 'other'))
     date_of_birth = DateTimeField()
     phone_code = StringField(default=None)

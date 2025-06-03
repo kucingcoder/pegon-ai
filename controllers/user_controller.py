@@ -161,75 +161,66 @@ def login():
 
 @user_bp.route('/login-with-google', methods=['POST'])
 def login_with_google():
-    try:
-        data = request.get_json()
+    data = request.get_json()
 
-        required_fields = ['name', 'email', 'google_id']
-        for field in required_fields:
-            if field not in data or data[field] == "":
-                return jsonify(
-                    {
-                        'code': 400,
-                        'status': 'bad request',
-                        'message': f'field {field} can\'t be empty'
-                    }
-                ), 400
-
-
-        if len(data['name']) > 64:
+    required_fields = ['name', 'email', 'google_id']
+    for field in required_fields:
+        if field not in data or data[field] == "":
             return jsonify(
                 {
                     'code': 400,
                     'status': 'bad request',
-                    'message': 'name too long'
+                    'message': f'field {field} can\'t be empty'
                 }
             ), 400
-        
-        name = data['name'].title()
-        email = data['email']
-        google_id = data['google_id']
 
-        user = User.objects(google_id=google_id).first()
 
-        if not user:
-            user = User(
-                name = name,
-                email = email,
-                google_id = google_id,
-                api_key = secrets.token_hex(32),
-                created_at = datetime.now(timezone.utc),
-                updated_at = datetime.now(timezone.utc)
-            )
-            user.save()
-
-        if user.status != 'active':
-            return jsonify(
-                {
-                    'code': 403,
-                    'status': 'forbidden',
-                    'message': 'user suspended'
-                }
-            ), 403
-        
-        token = create_access_token(identity=str(user.id))
-
-        return jsonify(
-                {
-                    'code': 200,
-                    'status': '0k',
-                    'message': 'continue with google successfully',
-                    'api_key': user.api_key,
-                    'access_token': token
-                }
-            ), 200
-    except Exception as e:
+    if len(data['name']) > 64:
         return jsonify(
             {
-                'code': 500,
-                'status': 'internal server error',
-                'message': str(e)
+                'code': 400,
+                'status': 'bad request',
+                'message': 'name too long'
             }
-        ), 500
+        ), 400
+    
+    name = data['name'].title()
+    email = data['email']
+    google_id = data['google_id']
+
+    user = User.objects(google_id=google_id).first()
+
+    if not user:
+        user = User(
+            name = name,
+            email = email,
+            google_id = google_id,
+            api_key = secrets.token_hex(32),
+            created_at = datetime.now(timezone.utc),
+            updated_at = datetime.now(timezone.utc)
+        )
+        user.save()
+
+    if user.status != 'active':
+        return jsonify(
+            {
+                'code': 403,
+                'status': 'forbidden',
+                'message': 'user suspended'
+            }
+        ), 403
+    
+    token = create_access_token(identity=str(user.id))
+
+    return jsonify(
+            {
+                'code': 200,
+                'status': '0k',
+                'message': 'continue with google successfully',
+                'api_key': user.api_key,
+                'access_token': token
+            }
+        ), 200
         
     
     
