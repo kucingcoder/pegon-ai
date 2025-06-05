@@ -8,7 +8,6 @@ class User(Document):
     
     phone_code = StringField(default=None)
     phone_number = StringField(default=None, unique=True, sparse=True, max_length=16)
-    google_id = StringField(default=None, unique=True, sparse=True, max_length=64)
     email = StringField(default=None, unique=True, sparse=True, max_length=254)
     
     api_key = StringField(required=True, unique=True)

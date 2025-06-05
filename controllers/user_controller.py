@@ -1,13 +1,18 @@
+import os
 import secrets
 import random
 import threading
 from flask_jwt_extended import get_jwt_identity, jwt_required, create_access_token
 from flask import Blueprint, request, jsonify
+from google.auth.transport.requests import Request
+from google.oauth2 import id_token
 from middleware.require_api_key import require_api_key
 from models.user import User
 from models.otp import Otp
 from datetime import datetime, timezone
 from utils import send_wa
+
+GOOGLE_WEB_CLIENT_ID = os.environ.get('GOOGLE_WEB_CLIENT_ID')
 
 user_bp = Blueprint('user', __name__)
 
@@ -163,38 +168,28 @@ def login():
 def login_with_google():
     data = request.get_json()
 
-    required_fields = ['name', 'email', 'google_id']
-    for field in required_fields:
-        if field not in data or data[field] == "":
-            return jsonify(
-                {
-                    'code': 400,
-                    'status': 'bad request',
-                    'message': f'field {field} can\'t be empty'
-                }
-            ), 400
-
-
-    if len(data['name']) > 64:
+    if 'token_id' not in data or data['token_id'] == '':
         return jsonify(
             {
                 'code': 400,
                 'status': 'bad request',
-                'message': 'name too long'
+                'message': f'field token_id can\'t be empty'
             }
         ), 400
-    
-    name = data['name'].title()
-    email = data['email']
-    google_id = data['google_id']
 
-    user = User.objects(google_id=google_id).first()
+    token_id = data['token_id']
+
+    idinfo = id_token.verify_oauth2_token(token_id, Request(), GOOGLE_WEB_CLIENT_ID)
+
+    email = idinfo.get('email')
+    name = idinfo.get('name')
+
+    user = User.objects(email=email).first()
 
     if not user:
         user = User(
             name = name,
             email = email,
-            google_id = google_id,
             api_key = secrets.token_hex(32),
             created_at = datetime.now(timezone.utc),
             updated_at = datetime.now(timezone.utc)

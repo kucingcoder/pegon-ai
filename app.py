@@ -23,7 +23,6 @@ for folder in folders:
 
 load_dotenv()
 
-APP_URL = os.environ.get('APP_URL')
 APP_KEY = os.environ.get('APP_KEY')
 
 MONGODB_HOST = os.environ.get('MONGODB_HOST')
@@ -32,9 +31,6 @@ MONGODB_USERNAME = os.environ.get('MONGODB_USERNAME')
 MONGODB_PASSWORD = os.environ.get('MONGODB_PASSWORD')
 MONGODB_AUTHDB = os.environ.get('MONGODB_AUTHDB')
 MONGODB_DATABASE = os.environ.get('MONGODB_DATABASE')
-
-KIRIMKAN_URL = os.environ.get('KIRIMKAN_URL')
-KIRIMKAN_API_KEY = os.environ.get('KIRIMKAN_API_KEY')
 
 try:
     if not MONGODB_USERNAME or not MONGODB_PASSWORD or not MONGODB_AUTHDB:
