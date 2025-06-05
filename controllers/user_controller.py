@@ -237,7 +237,7 @@ def profile():
     
     data = {}
 
-    if user.google_id != None:
+    if user.email != None:
         data = {
             'email': user.email,
             'name': user.name,
