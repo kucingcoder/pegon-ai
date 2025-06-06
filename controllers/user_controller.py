@@ -110,69 +110,59 @@ def register():
 
 @user_bp.route('/login', methods=['POST'])
 def login():
-    try:
-        data = request.get_json()
-        phone_number = data.get('phone_number')
+    data = request.get_json()
+    phone_number = data.get('phone_number')
 
-        if not phone_number or phone_number == "":
-            return jsonify(
-                {
-                    'code': 400,
-                    'status': 'bad request',
-                    'message': 'whatsapp number cant be empty'
-                }
-            ), 400
-
-        user = User.objects(phone_number=phone_number).first()
-
-        if not user:
-            return jsonify(
-                {
-                    'code': 404,
-                    'status': 'not found',
-                    'message': 'whatsapp number not registered'
-                }
-            ), 404
-
-        if user.status != 'active':
-            return jsonify(
-                {
-                    'code': 403,
-                    'status': 'forbidden',
-                    'message': 'user suspended'
-                }
-            ), 403
-        
-        otp = Otp.objects(user_id = user, status = 'active').first()
-
-        if not otp:
-            otp = Otp(
-                user_id = user,
-                code = str(random.randint(1000, 9999)),
-                created_at = datetime.now(timezone.utc),
-                updated_at = datetime.now(timezone.utc)
-            )
-            otp.save()
-
-        threading.Thread(target=send_wa, args=(phone_number, otp.code)).start()
-
+    if not phone_number or phone_number == "":
         return jsonify(
             {
-                'code': 200,
-                'status': 'ok',
-                'message': 'login successfully, please verify your whatsapp number',
-                'api_key': user.api_key
+                'code': 400,
+                'status': 'bad request',
+                'message': 'whatsapp number cant be empty'
             }
-        ), 200
-    except Exception as e:
-        print(f"Error in login: {str(e)}")
+        ), 400
+
+    user = User.objects(phone_number=phone_number).first()
+
+    if not user:
         return jsonify(
             {
-                'code': 500,
-                'status': 'internal server error',
-                'message': str(e)
+                'code': 404,
+                'status': 'not found',
+                'message': 'whatsapp number not registered'
             }
-        ), 500
+        ), 404
+
+    if user.status != 'active':
+        return jsonify(
+            {
+                'code': 403,
+                'status': 'forbidden',
+                'message': 'user suspended'
+            }
+        ), 403
+    
+    otp = Otp.objects(user_id = user, status = 'active').first()
+
+    if not otp:
+        otp = Otp(
+            user_id = user,
+            code = str(random.randint(1000, 9999)),
+            created_at = datetime.now(timezone.utc),
+            updated_at = datetime.now(timezone.utc)
+        )
+        otp.save()
+
+    threading.Thread(target=send_wa, args=(phone_number, otp.code)).start()
+
+    return jsonify(
+        {
+            'code': 200,
+            'status': 'ok',
+            'message': 'login successfully, please verify your whatsapp number',
+            'api_key': user.api_key
+        }
+    ), 200
 
 @user_bp.route('/login-with-google', methods=['POST'])
 def login_with_google():
