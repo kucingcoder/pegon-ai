@@ -179,7 +179,16 @@ def login_with_google():
 
     token_id = data['token_id']
 
-    idinfo = id_token.verify_oauth2_token(token_id, Request(), GOOGLE_WEB_CLIENT_ID)
+    try:
+        idinfo = id_token.verify_oauth2_token(token_id, Request(), GOOGLE_WEB_CLIENT_ID)
+    except Exception as e:
+        return jsonify(
+            {
+                'code': 400,
+                'status': 'bad request',
+                'message': 'invalid token'
+            }
+        ), 400
 
     email = idinfo.get('email')
     name = idinfo.get('name')
