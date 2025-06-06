@@ -19,8 +19,30 @@ def allowed_file(filename):
 @require_api_key()
 @jwt_required()
 def get_image_history():
+    from flask import request
+
     current_user = get_jwt_identity()
-    history = History.objects(user_id=current_user).order_by('-created_at')
+
+    page = int(request.args.get('page', 1))
+    if page < 1:
+        return jsonify({
+        'code': 400,
+        'status': 'error',
+        'message': 'Invalid page number'
+    }), 400
+        
+
+    limit = 10
+    skip = (page - 1) * limit
+
+    total_transliterate = History.objects(user_id=current_user).count()
+    history = (
+        History.objects(user_id=current_user)
+        .order_by('-created_at')
+        .skip(skip)
+        .limit(limit)
+    )
+
     data = []
     for item in history:
         doc = item.to_mongo().to_dict()
@@ -34,7 +56,13 @@ def get_image_history():
         'code': 200,
         'status': 'ok',
         'message': 'history retrieved successfully',
-        'data': data
+        'data': data,
+        'pagination': {
+            'page': page,
+            'limit': limit,
+            'total_items': total_transliterate,
+            'total_pages': (total_transliterate + limit - 1) // limit
+        }
     }), 200
 
 @transliterate_bp.route('/history/<id>', methods=['GET'])
