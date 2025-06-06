@@ -234,23 +234,12 @@ def profile():
                 'message': 'user not found'
             }
         ), 404
-    
-    data = {}
 
-    if user.email != None:
-        data = {
-            'email': user.email,
+    data = {
+            'id': str(user.id),
             'name': user.name,
             'sex': user.sex,
             'date_of_birth': user.date_of_birth.strftime("%Y-%m-%d") if user.date_of_birth else None
-        }
-    else:
-        data = {
-            'phone_code': user.phone_code,
-            'phone_number': user.phone_number,
-            'name': user.name,
-            'sex': user.sex,
-            'date_of_birth': user.date_of_birth.strftime("%Y-%m-%d") if user.date_of_birth else None,
         }
 
     return jsonify(
