@@ -1,5 +1,5 @@
 from mongoengine import Document, StringField, DateTimeField
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 class User(Document):
     name = StringField(required=True, max_length=64)
@@ -12,10 +12,12 @@ class User(Document):
     
     api_key = StringField(required=True, unique=True)
     status = StringField(default='active', choices=('active', 'suspend'))
+    category = StringField(default='free', choices=('free', 'premium'))
     role = StringField(default='user', choices=('user', 'admin'))
     
     created_at = DateTimeField(default=lambda: datetime.now(timezone.utc))
     updated_at = DateTimeField(default=lambda: datetime.now(timezone.utc))
+    expired_at = DateTimeField(default=lambda: datetime.now(timezone.utc) + timedelta(days=30))
 
     meta = {'collection': 'users'}
 
