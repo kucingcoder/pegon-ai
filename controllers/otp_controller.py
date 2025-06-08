@@ -72,8 +72,11 @@ def verification():
 
     token = create_access_token(identity=str(user.id))
 
-    device = request.headers.get('Device') or 'Unknown'
-    log(user.id, 'phone number verification', device)
+    try:
+        device = request.headers.get('Device') or 'Unknown'
+        log(user.id, 'phone number verification', device)
+    except Exception as e:
+        print(e)
 
     return jsonify(
             {
