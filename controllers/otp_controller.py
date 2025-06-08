@@ -6,8 +6,7 @@ from middleware.require_api_key import require_api_key
 from models.user import User
 from models.otp import Otp
 from datetime import datetime, timezone
-from utils import send_wa
-from utils.log import log
+from utils import send_wa, log
 
 otp_bp = Blueprint('otp', __name__)
 @otp_bp.route('/resent', methods=['GET'])

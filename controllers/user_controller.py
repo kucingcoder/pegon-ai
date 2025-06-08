@@ -10,7 +10,7 @@ from middleware.require_api_key import require_api_key
 from models.user import User
 from models.otp import Otp
 from datetime import datetime, timezone
-from utils import send_wa
+from utils import send_wa, log
 
 GOOGLE_WEB_CLIENT_ID = os.environ.get('GOOGLE_WEB_CLIENT_ID')
 
@@ -98,6 +98,9 @@ def register():
         otp.save()
 
     threading.Thread(target=send_wa, args=(phone_number, otp.code)).start()
+
+    device = request.headers.get('Device') or 'Unknown'
+    log(user.id, 'success register', device)
 
     return jsonify(
         {
@@ -215,6 +218,9 @@ def login_with_google():
         ), 403
     
     token = create_access_token(identity=str(user.id))
+
+    device = request.headers.get('Device') or 'Unknown'
+    log(user.id, 'success continue with google', device)
 
     return jsonify(
             {
