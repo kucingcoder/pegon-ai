@@ -225,9 +225,7 @@ def login_with_google():
                 'access_token': token
             }
         ), 200
-        
-    
-    
+
 @user_bp.route('/profile', methods=['GET'])
 @require_api_key()
 @jwt_required()
@@ -250,6 +248,7 @@ def profile():
             'sex': user.sex,
             'date_of_birth': user.date_of_birth.strftime("%Y-%m-%d") if user.date_of_birth else None,
             'category': user.category,
+            'join': user.created_at.strftime("%Y")
         }
 
     return jsonify(
