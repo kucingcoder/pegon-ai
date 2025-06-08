@@ -105,8 +105,8 @@
 
     <!-- Chart.js Script -->
     <script>
-        const fields = {{ fields | tojson }};
-        const values = {{ values | tojson }};
+        const fields = JSON.parse('{{ fields | tojson | safe }}');
+        const values = JSON.parse('{{ values | tojson | safe }}');
 
         // Bar Chart
         new Chart(document.getElementById("barChart"), {
