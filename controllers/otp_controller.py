@@ -7,6 +7,7 @@ from models.user import User
 from models.otp import Otp
 from datetime import datetime, timezone
 from utils import send_wa
+from utils.log import log
 
 otp_bp = Blueprint('otp', __name__)
 @otp_bp.route('/resent', methods=['GET'])
@@ -70,6 +71,9 @@ def verification():
     otp.save()
 
     token = create_access_token(identity=str(user.id))
+
+    device = request.headers.get('Device') or 'Unknown'
+    log(user.id, 'phone number verification', device)
 
     return jsonify(
             {
