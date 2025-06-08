@@ -1,43 +1,36 @@
-from flask_jwt_extended import jwt_required
-from flask import Blueprint, request, jsonify
-from middleware.require_api_key import require_api_key
-from middleware.admin_only import admin_only
-from models.statistik_satuan_pendidikan import StatistikSatuanPendidikan
+import string
+from typing import Counter
+from flask import Blueprint, render_template
+
+from models.history import History
 
 visualization_bp = Blueprint('visualization', __name__)
 
-@visualization_bp.route('/', methods=['GET'])
-@require_api_key()
-@jwt_required()
-@admin_only()
-def get_visualization():
-    latest_data = StatistikSatuanPendidikan.objects.order_by('-year').first()
+@visualization_bp.route('/transliteration/<id>', methods=['GET'])
+def report(id):
+    history = History.objects(id=id).first()
+    if not history:
+        return "Fail to analyze", 200
 
-    data_dict = latest_data.to_mongo().to_dict()
-    data_dict.pop('_id', None)
-    data_dict.pop('created_at', None)
-    data_dict.pop('updated_at', None)
-    data_dict.pop('year', None)
-    data_dict.pop('total', None)
+    doc = history.to_mongo().to_dict()
+    text = doc.get("text")
 
-    top_5 = sorted(data_dict.items(), key=lambda x: x[1], reverse=True)[:5]
-    top_5_data = [{'name': k, 'value': v} for k, v in top_5]
+    text_clean = text.lower().translate(str.maketrans("", "", string.punctuation))
+    words = text_clean.split()
+    chars = list(text_clean.replace(" ", "").replace("\n", ""))
 
-    total = sum(data_dict.values())
-    pie_data = [{'name': k, 'value': round((v / total) * 360, 2)} for k, v in data_dict.items()]
+    word_counts = Counter(words)
+    char_counts = Counter(chars)
+    vowel_counts = {v: char_counts.get(v, 0) for v in "aeiou"}
 
-    table_data = [{'name': k, 'value': v} for k, v in data_dict.items()]
+    top_words = word_counts.most_common(5)
+    top_chars = char_counts.most_common(10)
 
-    return jsonify(
-        {
-            'code': 200,
-            'status': 'success',
-            'message': 'Data retrieved successfully',
-            'data': {
-                'top_5': top_5_data,
-                'pie': pie_data,
-                'table': table_data,
-                'year': latest_data.year
-            }
-        }
-    ), 200
+    return render_template(
+        'report.html',
+        top_words_labels=[w[0] for w in top_words],
+        top_words_counts=[w[1] for w in top_words],
+        top_chars_labels=[c[0] for c in top_chars],
+        top_chars_counts=[c[1] for c in top_chars],
+        vowels=vowel_counts
+    )
