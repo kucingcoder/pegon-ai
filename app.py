@@ -5,7 +5,7 @@ from flask import Flask, render_template
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from mongoengine import connect
-from controllers import user_bp, otp_bp, tutorial_bp, transliterate_bp, visualization_bp
+from controllers import user_bp, otp_bp, tutorial_bp, transliterate_bp, visualization_bp, payment_bp
 from models.statistik_satuan_pendidikan import StatistikSatuanPendidikan
 from utils import update_big_data
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -54,6 +54,7 @@ app.register_blueprint(otp_bp, url_prefix='/api/otp')
 app.register_blueprint(tutorial_bp, url_prefix='/api/tutorial')
 app.register_blueprint(transliterate_bp, url_prefix='/api/transliterate')
 app.register_blueprint(visualization_bp, url_prefix='/api/visualization')
+app.register_blueprint(payment_bp, url_prefix='/api/payment')
 
 @app.route("/statistic")
 def statistic():
