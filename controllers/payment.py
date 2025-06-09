@@ -14,7 +14,7 @@ def error():
     return 200
 
 @payment_bp.route('/finish', methods=['GET'])
-def error():
+def finish():
     data = request.get_json()
     print(data)
     return 'Hello world'
