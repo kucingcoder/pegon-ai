@@ -148,7 +148,7 @@ def image_to_text():
     if user.category != 'pro':
         today = date.today()
         usage_count = FreeUsage.objects(
-            user_id=user,
+            user_id=get_jwt_identity(),
             created_at=today
         ).count()
 
