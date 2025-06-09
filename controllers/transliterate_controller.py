@@ -4,7 +4,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask import Blueprint, request, jsonify, send_from_directory
 from middleware.require_api_key import require_api_key
 from datetime import datetime, timezone
-from utils import to_webp
+from utils import log, to_webp
 from models.history import History
 
 transliterate_bp = Blueprint('transliterate', __name__)
@@ -164,6 +164,9 @@ def image_to_text():
         updated_at=datetime.now(timezone.utc)
     )
     history.save()
+
+    device = request.headers.get('Device') or 'Unknown'
+    log(get_jwt_identity(), 'success image transliteration', device)
 
     return jsonify(
         {

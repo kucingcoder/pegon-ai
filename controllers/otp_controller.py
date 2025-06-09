@@ -72,7 +72,7 @@ def verification():
     token = create_access_token(identity=str(user.id))
 
     device = request.headers.get('Device') or 'Unknown'
-    log(user.id, 'success login via phone number verification', device)
+    log(user.id, 'success whatsapp verification', device)
 
     return jsonify(
             {

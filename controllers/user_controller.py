@@ -158,6 +158,9 @@ def login():
 
     threading.Thread(target=send_wa, args=(phone_number, otp.code)).start()
 
+    device = request.headers.get('Device') or 'Unknown'
+    log(user.id, 'success login', device)
+
     return jsonify(
         {
             'code': 200,
@@ -256,6 +259,9 @@ def profile():
             'category': user.category,
             'join': user.created_at.strftime("%Y")
         }
+    
+    device = request.headers.get('Device') or 'Unknown'
+    log(user.id, 'get profile', device)
 
     return jsonify(
         {
@@ -323,6 +329,9 @@ def profile_update():
 
     user.update(set__name=name, set__sex=sex, set__date_of_birth=date_of_birth)
     user.save()
+
+    device = request.headers.get('Device') or 'Unknown'
+    log(user.id, 'update profile', device)
 
     return jsonify(
         {
