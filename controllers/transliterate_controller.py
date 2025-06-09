@@ -149,7 +149,7 @@ def image_to_text():
         today = date.today()
         usage_count = FreeUsage.objects(
             user_id=user,
-            created_at__gte=today
+            created_at=today
         ).count()
 
         if usage_count > 3:
