@@ -3,7 +3,9 @@ import os
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask import Blueprint, request, jsonify, send_from_directory
 from middleware.require_api_key import require_api_key
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
+from models.free_usage import FreeUsage
+from models.user import User
 from utils import log, to_webp
 from models.history import History
 
@@ -141,6 +143,25 @@ def image_to_text():
         }), 400
     
     ext = file.filename.rsplit('.', 1)[1].lower()
+
+    user = User.objects.get(id=get_jwt_identity())
+    if user.category != 'pro':
+        today = date.today()
+        usage_count = FreeUsage.objects(
+            user_id=user,
+            created_at__gte=today
+        ).count()
+
+        if usage_count > 3:
+            return jsonify({
+                'code': 403,
+                'status': 'forbidden',
+                'message': 'free usage limit reached'
+            }), 403
+        
+        usage = FreeUsage(user_id=user)
+        usage.save()
+
 
     now_str = str(datetime.now())
     md5_hash = hashlib.md5(now_str.encode()).hexdigest()
