@@ -152,7 +152,7 @@ def image_to_text():
             created_at=today
         ).count()
 
-        if usage_count > 3:
+        if usage_count >= 3:
             return jsonify({
                 'code': 403,
                 'status': 'forbidden',
