@@ -1,4 +1,4 @@
-from mongoengine import Document, StringField, DateTimeField
+from mongoengine import Document, StringField, DateTimeField, DateField
 from datetime import datetime, timedelta, timezone
 
 class User(Document):
@@ -17,7 +17,7 @@ class User(Document):
     
     created_at = DateTimeField(default=lambda: datetime.now(timezone.utc))
     updated_at = DateTimeField(default=lambda: datetime.now(timezone.utc))
-    expired_at = DateTimeField(default=lambda: datetime.now(timezone.utc) + timedelta(days=30))
+    expired_at = DateField(default=lambda: datetime.now(timezone.utc).date() + timedelta(days=30))
 
     meta = {'collection': 'users'}
 
