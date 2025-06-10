@@ -150,7 +150,7 @@ def image_to_text():
         usage = FreeUsage(user_id=user)
         usage.save()
 
-    today = date.today()
+    today = datetime.utcnow().date()
     usage_count = FreeUsage.objects(user_id=user.id, created_at=today).count()
 
     print(usage_count)
