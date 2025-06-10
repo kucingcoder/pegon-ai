@@ -126,9 +126,7 @@ def notif():
     if not payment:
         return jsonify(data), 200
     
-    print(payment.user_id.id)
-    
-    user = User.objects(id=payment.user_id).first()
+    user = User.objects(id=payment.user_id.id).first()
     if not user:
         return jsonify(data), 200
 
