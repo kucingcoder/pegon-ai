@@ -73,6 +73,7 @@ def payment():
             }
         }), 201
     except Exception as e:
+        print(e)
         return jsonify({
             'code': 400,
             'status': 'bad request',
