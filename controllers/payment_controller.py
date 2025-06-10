@@ -68,7 +68,7 @@ def payment():
             'status': 'created',
             'message': 'transaction created',
             'data': {
-                'snap_token': transaction['token']
+                'snap_token': str(transaction['token'])
             }
         }), 201
     except Exception as e:
