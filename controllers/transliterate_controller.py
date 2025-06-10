@@ -145,6 +145,7 @@ def image_to_text():
     ext = file.filename.rsplit('.', 1)[1].lower()
 
     user = User.objects(id=get_jwt_identity()).first()
+    print(user)
     if user.category != 'pro':
         usage = FreeUsage(user_id=user)
         usage.save()
