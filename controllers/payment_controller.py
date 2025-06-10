@@ -50,7 +50,7 @@ def payment():
         "item_details": [
             {
                 "id": "1",
-                "price": 15000,
+                "price": 1000,
                 "quantity": 1,
                 "name": "Pegon AI Pro 1 Bulan"
             }
