@@ -144,23 +144,19 @@ def image_to_text():
     
     ext = file.filename.rsplit('.', 1)[1].lower()
 
-    user = User.objects.get(id=get_jwt_identity())
+    user = User.objects.get(id=get_jwt_identity()).first()
     if user.category != 'pro':
-        today = date.today()
-        usage_count = FreeUsage.objects(
-            user_id=user.id,
-            created_at=today
-        ).count()
-
-        if usage_count >= 3:
-            return jsonify({
-                'code': 403,
-                'status': 'forbidden',
-                'message': 'free usage limit reached'
-            }), 403
-        
         usage = FreeUsage(user_id=user)
         usage.save()
+
+    today = date.today()
+    usage_count = FreeUsage.objects(user_id=user.id, created_at=today).count()
+    if usage_count > 3:
+        return jsonify({
+            'code': 403,
+            'status': 'forbidden',
+            'message': 'free usage limit reached'
+        }), 403
 
 
     now_str = str(datetime.now())
