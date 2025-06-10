@@ -8,4 +8,4 @@ class LogActivity(Document):
     device = StringField(required=True)
     timestamp = DateTimeField(default=lambda: datetime.now(timezone.utc))
     
-    meta = {'collection': 'log_activity'}
+    meta = {'collection': 'log_activities'}

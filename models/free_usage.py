@@ -6,4 +6,4 @@ class FreeUsage(Document):
     user_id = ReferenceField(User, required=True)
     created_at = DateField(default=lambda: datetime.now(timezone.utc).date())
     
-    meta = {'collection': 'free_usage'}
+    meta = {'collection': 'free_usages'}
