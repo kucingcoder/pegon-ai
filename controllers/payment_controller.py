@@ -73,7 +73,6 @@ def payment():
             }
         }), 201
     except Exception as e:
-        print(e)
         return jsonify({
             'code': 400,
             'status': 'bad request',
@@ -126,6 +125,8 @@ def notif():
     payment = Payment.objects(id=order_id).first()
     if not payment:
         return jsonify(data), 200
+    
+    print(payment.user_id)
     
     user = User.objects(id=payment.user_id).first()
     if not user:
