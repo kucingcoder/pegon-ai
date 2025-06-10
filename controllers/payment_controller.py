@@ -14,7 +14,7 @@ MIDTRANS_SERVER_TYPE = os.environ.get('MIDTRANS_SERVER_TYPE')
 production = False
 
 if MIDTRANS_SERVER_TYPE == 'production':
-    production = False
+    production = True
 
 snap = midtransclient.Snap(
     is_production = production,
