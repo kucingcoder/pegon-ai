@@ -37,6 +37,13 @@ def payment():
             'message': 'user not found'
         }), 404
 
+    if user.category == 'pro':
+        return jsonify({
+            'code': 400,
+            'status': 'bad request',
+            'message': 'user already pro'
+        }), 400
+
     payment = Payment(user_id=user.id, product='Pegon AI Pro 1 Bulan', price=15000)
     payment.save()
 
