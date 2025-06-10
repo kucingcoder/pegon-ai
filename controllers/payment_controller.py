@@ -68,6 +68,7 @@ def payment():
             'status': 'created',
             'message': 'transaction created',
             'data': {
+                'payment_id': str(payment.id),
                 'snap_token': str(transaction['token'])
             }
         }), 201
