@@ -3,7 +3,7 @@ import os
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from flask import Blueprint, request, jsonify, send_from_directory
 from middleware.require_api_key import require_api_key
-from datetime import date, datetime, timezone
+from datetime import datetime, timezone
 from models.free_usage import FreeUsage
 from models.user import User
 from utils import log, to_webp
@@ -145,15 +145,12 @@ def image_to_text():
     ext = file.filename.rsplit('.', 1)[1].lower()
 
     user = User.objects(id=get_jwt_identity()).first()
-    print(user.id)
     if user.category != 'pro':
         usage = FreeUsage(user_id=user)
         usage.save()
 
-    today = datetime.utcnow().date()
+    today = datetime.now(timezone.utc).date()
     usage_count = FreeUsage.objects(user_id=user.id, created_at=today).count()
-
-    print(usage_count)
 
     if usage_count > 3:
         return jsonify({
