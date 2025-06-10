@@ -327,7 +327,9 @@ def profile_update():
             }
         ), 404
 
-    user.update(set__name=name, set__sex=sex, set__date_of_birth=date_of_birth)
+    user.name = name
+    user.sex = sex
+    user.date_of_birth = date_of_birth
     user.save()
 
     device = request.headers.get('Device') or 'Unknown'

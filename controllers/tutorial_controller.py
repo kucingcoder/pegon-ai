@@ -230,7 +230,10 @@ def edit_tutorial(id):
     if os.path.exists(old_thumbnail):
         os.remove(old_thumbnail)
 
-    tutorial.update(set__name=name, set__description=description, set__link=link, set__thumbnail=output_filename)
+    tutorial.name = name
+    tutorial.description = description
+    tutorial.link = link
+    tutorial.thumbnail = output_filename
     tutorial.save()
 
     return jsonify(
