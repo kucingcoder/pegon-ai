@@ -43,7 +43,7 @@ def payment():
     param = {
         "transaction_details": {
             "order_id": payment.id,
-            "gross_amount": 15000
+            "gross_amount": 1000
         }, "credit_card":{
             "secure" : True
         },
