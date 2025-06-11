@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tutorials</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+    <!-- Header -->
+    <header class="bg-white shadow p-4 text-center">
+        <h1 class="text-2xl font-bold text-gray-800">Tutorial Terbaru</h1>
+    </header>
+
+    <!-- Slider -->
+    <div class="relative w-full overflow-hidden mt-4">
+        <div class="flex animate-scroll whitespace-nowrap">
+            {% for tutorial in tutorials[:5] %}
+            <div class="inline-block w-full md:w-1/2 lg:w-1/3 px-2">
+                <div class="rounded overflow-hidden shadow-lg bg-white m-2">
+                    <img class="w-full h-48 object-cover" src="{{ tutorial.thumbnail }}" alt="{{ tutorial.name }}">
+                    <div class="px-4 py-2">
+                        <h2 class="font-bold text-lg truncate">{{ tutorial.name }}</h2>
+                        <p class="text-sm text-gray-600">{{ tutorial.description[:100] }}...</p>
+                        <a href="{{ tutorial.link }}" target="_blank"
+                            class="mt-2 inline-block text-blue-600 hover:underline">Lihat Selengkapnya</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Card List -->
+    <div class="max-w-6xl mx-auto py-8 px-4">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Semua Tutorial</h2>
+        <div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+            {% for tutorial in tutorials %}
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <img src="{{ tutorial.thumbnail }}" alt="{{ tutorial.name }}" class="w-full h-40 object-cover">
+                <div class="p-4">
+                    <h3 class="font-bold text-lg text-gray-800">{{ tutorial.name }}</h3>
+                    <p class="text-sm text-gray-600">{{ tutorial.description[:100] }}...</p>
+                    <a href="{{ tutorial.link }}" target="_blank"
+                        class="mt-2 inline-block text-blue-500 hover:underline">Buka Tutorial</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 text-sm text-gray-500 bg-white border-t">
+        &copy; Pegon AI 2025 All rights reserved.
+    </footer>
+
+    <!-- Optional Slider Animation (CSS only) -->
+    <style>
+        @keyframes scroll {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        .animate-scroll {
+            animation: scroll 30s linear infinite;
+        }
+    </style>
+</body>
+
+</html>

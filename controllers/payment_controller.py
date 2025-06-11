@@ -44,22 +44,22 @@ def payment():
             'message': 'user already pro'
         }), 400
 
-    payment = Payment(user_id=user.id, product='Pegon AI Pro 1 Bulan', price=15000)
+    payment = Payment(user_id=user.id, product='Pegon AI Pro 1 Month', price=10000)
     payment.save()
 
     param = {
         "transaction_details": {
             "order_id": str(payment.id),
-            "gross_amount": 1000
+            "gross_amount": 10000
         }, "credit_card":{
             "secure" : True
         },
         "item_details": [
             {
                 "id": "1",
-                "price": 1000,
+                "price": 10000,
                 "quantity": 1,
-                "name": "Pegon AI Pro 1 Bulan"
+                "name": "Pegon AI Pro 1 Month"
             }
         ]
     }

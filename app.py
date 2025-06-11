@@ -9,6 +9,7 @@ from mongoengine import connect
 from controllers import user_bp, otp_bp, tutorial_bp, transliterate_bp, visualization_bp, payment_bp, admin_bp
 from models.admin import Admin
 from models.statistik_satuan_pendidikan import StatistikSatuanPendidikan
+from models.tutorial import Tutorial
 from utils import update_big_data
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -89,8 +90,13 @@ def statistic():
 
 
 @app.route('/')
-def index():
-    return {'message': 'API berjalan dengan baik!'}
+def landing():
+    return render_template('landing.html')
+
+@app.route('/tutorial')
+def tutorial():
+    tutorials = Tutorial.objects().order_by('-created_at')
+    return render_template('tutorial.html', tutorials=tutorials)
 
 update_big_data()
 
