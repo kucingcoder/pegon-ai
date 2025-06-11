@@ -1,7 +1,9 @@
-from mongoengine import Document, StringField, DateTimeField
+from mongoengine import Document,ReferenceField, StringField, DateTimeField
 from datetime import datetime, timezone
+from models.admin import Admin
 
 class Tutorial(Document):
+    Admin_id = ReferenceField(Admin, required=True)
     name = StringField(required=True, unique=True, max_length=64)
     thumbnail = StringField(required=True)
     description = StringField(required=True)
