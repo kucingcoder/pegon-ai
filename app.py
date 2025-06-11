@@ -1,3 +1,4 @@
+import hashlib
 import os
 from dotenv import load_dotenv
 from urllib.parse import quote
@@ -5,7 +6,8 @@ from flask import Flask, render_template
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from mongoengine import connect
-from controllers import user_bp, otp_bp, tutorial_bp, transliterate_bp, visualization_bp, payment_bp
+from controllers import user_bp, otp_bp, tutorial_bp, transliterate_bp, visualization_bp, payment_bp, admin_bp
+from models.admin import Admin
 from models.statistik_satuan_pendidikan import StatistikSatuanPendidikan
 from utils import update_big_data
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -39,11 +41,18 @@ try:
         connection_string = f'mongodb://{MONGODB_USERNAME}:{quote(MONGODB_PASSWORD)}@{MONGODB_HOST}:{MONGODB_PORT}/?directConnection=true&authSource={MONGODB_AUTHDB}'
     
     connect(db=MONGODB_DATABASE, host=connection_string)
+
+    admin = Admin.objects().count()
+
+    if admin == 0:
+        admin = Admin(username='felix', password=hashlib.md5('c890Ir-$cMe7K9EC]WI_,+qDcG1&@XN.J+0LJutK2ROv&!8Gq}'.encode()).hexdigest())
+        admin.save()
 except Exception as e:
     exit(e)
 
 app = Flask(__name__)
 CORS(app)
+app.secret_key = APP_KEY
 app.config['JWT_SECRET_KEY'] = APP_KEY
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = False
 
@@ -55,6 +64,7 @@ app.register_blueprint(tutorial_bp, url_prefix='/api/tutorial')
 app.register_blueprint(transliterate_bp, url_prefix='/api/transliterate')
 app.register_blueprint(visualization_bp, url_prefix='/api/visualization')
 app.register_blueprint(payment_bp, url_prefix='/api/payment')
+app.register_blueprint(admin_bp, url_prefix='/')
 
 @app.route("/statistic")
 def statistic():

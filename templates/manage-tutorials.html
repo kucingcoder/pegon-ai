@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Tutorials</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 p-6">
+    <div class="max-w-7xl mx-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold">Manage Tutorials</h1>
+            <div class="flex gap-2">
+                <a href="/logout" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">
+                    Logout
+                </a>
+                <button onclick="openModal('add-modal')"
+                    class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                    + Add Tutorial
+                </button>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="space-y-2 mb-4">
+            {% for category, message in messages %}
+            <div
+                class="px-4 py-2 rounded {{ 'bg-red-100 text-red-700' if category == 'error' else 'bg-green-100 text-green-700' }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for tutorial in tutorials %}
+            <div class="bg-white rounded-lg shadow p-4 relative">
+                <img src="/api/tutorial/thumbnail/{{tutorial.thumbnail}}" alt="{{ tutorial.name }}"
+                    class="w-full h-48 object-cover rounded">
+                <h2 class="text-xl font-semibold mt-3">{{ tutorial.name }}</h2>
+
+                <div class="flex gap-2 mt-4">
+                    <!-- Edit Button -->
+                    <button
+                        onclick="openEditModal('{{ tutorial.id }}', '{{ tutorial.name }}', `{{ tutorial.description }}`, '{{ tutorial.link }}')"
+                        class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">Edit</button>
+                    <!-- Delete Form -->
+                    <form method="POST" action="/delete-tutorial/{{ tutorial.id }}"
+                        onsubmit="return confirm('Are you sure?')">
+                        <button class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">Delete</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Add Modal -->
+    <div id="add-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-lg w-full max-w-md relative">
+            <button onclick="closeModal('add-modal')"
+                class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">&times;</button>
+            <h2 class="text-xl font-bold mb-4">Add Tutorial</h2>
+            <form action="/add-tutorial" method="POST" enctype="multipart/form-data" class="space-y-4">
+                <input name="name" placeholder="Tutorial Name" class="w-full border px-3 py-2 rounded" required>
+                <textarea name="description" placeholder="Description" class="w-full border px-3 py-2 rounded" rows="4"
+                    required></textarea>
+                <input name="link" placeholder="Link" class="w-full border px-3 py-2 rounded" required>
+                <input type="file" name="thumbnail" accept="image/*" class="w-full border px-3 py-2 rounded" required>
+                <div class="flex justify-end">
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-lg w-full max-w-md relative">
+            <button onclick="closeModal('edit-modal')"
+                class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">&times;</button>
+            <h2 class="text-xl font-bold mb-4">Edit Tutorial</h2>
+            <form id="edit-form" method="POST" enctype="multipart/form-data" class="space-y-4">
+                <input id="edit-name" name="name" placeholder="Tutorial Name" class="w-full border px-3 py-2 rounded"
+                    required>
+                <textarea id="edit-description" name="description" placeholder="Description"
+                    class="w-full border px-3 py-2 rounded" rows="4" required></textarea>
+                <input id="edit-link" name="link" placeholder="Link" class="w-full border px-3 py-2 rounded" required>
+                <input type="file" name="thumbnail" accept="image/*" class="w-full border px-3 py-2 rounded" required>
+                <div class="flex justify-end">
+                    <button class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        function openEditModal(id, name, description, link) {
+            openModal('edit-modal');
+            document.getElementById('edit-name').value = name;
+            document.getElementById('edit-description').value = description;
+            document.getElementById('edit-link').value = link;
+            document.getElementById('edit-form').action = '/edit-tutorial/' + id;
+        }
+    </script>
+</body>
+
+</html>
