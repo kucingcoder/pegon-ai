@@ -88,38 +88,8 @@ def payment():
             'status': 'bad request',
             'message': 'can\'t create transaction'
         }), 400
-    
-@payment_bp.route('/payment-check', methods=['POST'])
-@require_api_key()
-@jwt_required()
-def payment_check():
-    data = request.get_json()
-    if 'payment_id' not in data or data['payment_id'] == "":
-            return jsonify({
-                'code': 400,
-                'status': 'bad request',
-                'message': f'field payment_id can\'t be empty'
-            }), 400
-    
-    payment_id = data['payment_id']
-    payment = Payment.objects(id=payment_id).first()
 
-    if not payment:
-        return jsonify({
-            'code': 400,
-            'status': 'bad request',
-            'message': 'payment not found'
-        }), 400
-
-    return jsonify({
-        'code': 200,
-        'status': 'ok',
-        'message': 'success check payment',
-        'data': {
-            'status': payment.status
-        }
-    }), 200
-
+# KUHUSUS UNTUK MIDTRANS (WEBHOOK)
 @payment_bp.route('/notification', methods=['POST'])
 def notif():
     data = request.get_json()
@@ -152,11 +122,13 @@ def notif():
     payment.save()
     return jsonify(data), 200
 
+# KUHUSUS UNTUK MIDTRANS (WEBHOOK)
 @payment_bp.route('/error', methods=['POST'])
 def error():
     data = request.get_json()
     return jsonify(data), 200
 
+# KUHUSUS UNTUK MIDTRANS (HALAMAN SETELAH BERHASIL MEMBAYAR)
 @payment_bp.route('/finish', methods=['GET'])
 def finish():
-    return 'Hello world'
+    return 'arigatou'
