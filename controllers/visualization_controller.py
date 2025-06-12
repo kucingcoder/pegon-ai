@@ -1,7 +1,6 @@
 import string
 from typing import Counter
 from flask import Blueprint, render_template
-
 from models.history import History
 
 visualization_bp = Blueprint('visualization', __name__)

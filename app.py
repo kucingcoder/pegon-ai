@@ -51,6 +51,12 @@ try:
 except Exception as e:
     exit(e)
 
+update_big_data()
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(update_big_data, 'cron', hour=0, minute=0)
+scheduler.start()
+
 app = Flask(__name__)
 CORS(app)
 app.secret_key = APP_KEY
@@ -66,6 +72,20 @@ app.register_blueprint(transliterate_bp, url_prefix='/api/transliterate')
 app.register_blueprint(visualization_bp, url_prefix='/api/visualization')
 app.register_blueprint(payment_bp, url_prefix='/api/payment')
 app.register_blueprint(admin_bp, url_prefix='/')
+
+@app.route('/')
+def landing():
+    return render_template('landing.html')
+
+@app.route('/tutorial')
+def tutorials():
+    tutorials = Tutorial.objects().order_by('-created_at')
+    return render_template('tutorial.html', tutorials=tutorials)
+
+@app.route('/tutorial/<id>')
+def tutorial(id):
+    tutorial = Tutorial.objects(id=id).first()
+    return render_template('tutorial-detail.html', tutorial=tutorial)
 
 @app.route("/statistic")
 def statistic():
@@ -87,22 +107,6 @@ def statistic():
         fields=fields,
         values=values
     )
-
-
-@app.route('/')
-def landing():
-    return render_template('landing.html')
-
-@app.route('/tutorial')
-def tutorial():
-    tutorials = Tutorial.objects().order_by('-created_at')
-    return render_template('tutorial.html', tutorials=tutorials)
-
-update_big_data()
-
-scheduler = BackgroundScheduler()
-scheduler.add_job(update_big_data, 'cron', hour=0, minute=0)
-scheduler.start()
 
 if __name__ == '__main__':
     app.run()

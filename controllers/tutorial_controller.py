@@ -1,7 +1,6 @@
 import os
 from flask import Blueprint, jsonify, send_from_directory
 from models.tutorial import Tutorial
-from utils import to_webp
 
 tutorial_bp = Blueprint('tutorial', __name__)
 

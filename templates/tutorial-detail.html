@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tutorial Page</title>
+    <title>{{ tutorial.name }}</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
         :root {
@@ -45,23 +45,19 @@
         </nav>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 py-10">
-        <h1 class="text-3xl font-bold text-center mb-10">Tutorials</h1>
-        <div class="grid gap-6 md:grid-cols-3">
-            {% for tutorial in tutorials %}
-            <div class="bg-white rounded shadow hover:shadow-md transition overflow-hidden">
-                <img src="{{ tutorial.thumbnail }}" alt="{{ tutorial.name }} thumbnail"
-                    class="w-full h-48 object-cover">
-                <div class="p-4">
-                    <h2 class="text-lg font-bold mb-2">{{ tutorial.name }}</h2>
-                    <p class="text-xs text-gray-500">Created: {{ tutorial.created_at.strftime('%Y-%m-%d') }}</p>
-                    <p class="text-xs text-gray-500 mb-4">Updated: {{ tutorial.updated_at.strftime('%Y-%m-%d') }}</p>
-                    <a href="{{ tutorial.link }}"
-                        class="inline-block mt-2 px-4 py-2 bg-theme text-white text-sm rounded hover:opacity-90">View
-                        Tutorial</a>
-                </div>
-            </div>
-            {% endfor %}
+    <main class="max-w-4xl mx-auto px-4 py-10">
+        <h1 class="text-3xl font-bold mb-4">{{ tutorial.name }}</h1>
+        <p class="text-sm text-gray-500 mb-6">Last updated: {{ tutorial.updated_at.strftime('%Y-%m-%d') }}</p>
+
+        <div class="aspect-w-16 aspect-h-9 mb-6">
+            <iframe class="w-full h-96 rounded shadow"
+                src="https://www.youtube.com/embed/{{ tutorial.link | replace('https://www.youtube.com/watch?v=', '') }}"
+                frameborder="0" allowfullscreen></iframe>
+        </div>
+
+        <div class="bg-white p-6 rounded shadow">
+            <h2 class="text-xl font-semibold mb-2 text-theme">Description</h2>
+            <p class="text-gray-700">{{ tutorial.description }}</p>
         </div>
     </main>
 

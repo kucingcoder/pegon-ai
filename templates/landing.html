@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Landing Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --theme-color: #FF990E;
+        }
+
+        .bg-theme {
+            background-color: var(--theme-color);
+        }
+
+        .text-theme {
+            color: var(--theme-color);
+        }
+
+        .hover\:bg-theme:hover {
+            background-color: var(--theme-color);
+        }
+
+        .hover\:text-theme:hover {
+            color: var(--theme-color);
+        }
+
+        .border-theme {
+            border-color: var(--theme-color);
+        }
+    </style>
+</head>
+
+<body class="text-gray-700">
+    <!-- Navbar -->
+    <header class="flex justify-between items-center p-4 shadow">
+        <div class="flex items-center space-x-2">
+            <img src="logo.svg" alt="Logo" class="h-6">
+            <span class="font-bold text-xl">Logo</span>
+        </div>
+        <nav class="hidden md:flex space-x-6">
+            <div class="relative group">
+                <button class="hover:text-theme">Features</button>
+            </div>
+            <a href="#" class="hover:text-theme">Pricing</a>
+            <a href="#" class="hover:text-theme">About us</a>
+            <a href="#" class="hover:text-theme">Blog</a>
+        </nav>
+        <div class="space-x-2">
+            <a href="#" class="text-sm text-gray-600 hover:text-theme">Sign in</a>
+            <a href="#" class="px-3 py-1 text-sm bg-theme text-white rounded hover:opacity-90">Sign up</a>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="flex flex-col md:flex-row items-center p-10">
+        <div class="flex-1 space-y-4">
+            <h1 class="text-4xl font-bold">Website heading goes here</h1>
+            <p>Occaecat est ipsum reprehenderit reprehenderit veniam anim laborum est esse duis occaecat reprehenderit
+                pariatur.</p>
+            <div class="space-x-4">
+                <a href="#" class="px-4 py-2 bg-theme text-white rounded hover:opacity-90">Join us now</a>
+                <a href="#" class="text-theme hover:underline">Learn more</a>
+            </div>
+        </div>
+        <img src="https://via.placeholder.com/300" alt="Hero image" class="mt-6 md:mt-0 md:ml-10 rounded-xl">
+    </section>
+
+    <!-- Features -->
+    <section class="text-center py-10 bg-gray-50">
+        <h2 class="text-2xl font-bold mb-2">Product Features</h2>
+        <p class="mb-6 text-sm text-gray-500">Do consectetur proident proident id eiusmod deserunt consequat pariatur ad
+            ex velit do Lorem reprehenderit.</p>
+        <div class="grid md:grid-cols-3 gap-6 px-4">
+            <div class="bg-white p-4 rounded shadow">
+                <img src="https://via.placeholder.com/200" class="mb-4 rounded">
+                <h3 class="font-semibold">Feature</h3>
+                <p class="text-sm">Do consectetur proident proident id eiusmod deserunt consequat</p>
+                <a href="#" class="text-theme text-sm mt-2 inline-block">Learn more</a>
+            </div>
+            <div class="bg-white p-4 rounded shadow">
+                <img src="https://via.placeholder.com/200" class="mb-4 rounded">
+                <h3 class="font-semibold">Feature</h3>
+                <p class="text-sm">Adipisicing labore ea nulla dolor et ad ad quis proident laboris</p>
+                <a href="#" class="text-theme text-sm mt-2 inline-block">Learn more</a>
+            </div>
+            <div class="bg-white p-4 rounded shadow">
+                <img src="https://via.placeholder.com/200" class="mb-4 rounded">
+                <h3 class="font-semibold">Feature</h3>
+                <p class="text-sm">Consequat dolor exercitation minim ea aliquip officia et</p>
+                <a href="#" class="text-theme text-sm mt-2 inline-block">Learn more</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonial -->
+    <section class="bg-gray-100 py-10 text-center">
+        <div class="max-w-2xl mx-auto">
+            <img src="https://via.placeholder.com/80" class="rounded-full mx-auto mb-4">
+            <div class="flex justify-center space-x-1 text-yellow-500 mb-2">
+                <span>★★★★★</span>
+            </div>
+            <p class="text-sm mb-2">"Aliqua cupidatat id duis irure sunt exercitation voluptate cillum. Consectetur ad
+                ex do in reprehenderit est dolor elit et exercitation do ad."
+            </p>
+            <div class="font-semibold">Full name</div>
+            <div class="text-sm text-gray-500">Job title</div>
+        </div>
+    </section>
+
+    <!-- Trusted logos -->
+    <section class="py-10 text-center">
+        <h3 class="text-gray-600 font-medium mb-6">Trusted by</h3>
+        <div class="flex justify-center flex-wrap gap-8">
+            <img src="https://via.placeholder.com/100x40" class="h-10">
+            <img src="https://via.placeholder.com/100x40" class="h-10">
+            <img src="https://via.placeholder.com/100x40" class="h-10">
+            <img src="https://via.placeholder.com/100x40" class="h-10">
+            <img src="https://via.placeholder.com/100x40" class="h-10">
+        </div>
+    </section>
+
+    <!-- Team -->
+    <section class="bg-gray-50 py-10">
+        <div class="text-center mb-6">
+            <h2 class="text-2xl font-bold">Our Team</h2>
+            <p class="text-sm text-gray-500">Do consectetur proident proident id eiusmod deserunt consequat pariatur ad
+                ex velit do Lorem reprehenderit.</p>
+        </div>
+        <div class="grid md:grid-cols-4 gap-6 px-4">
+            <div class="bg-white p-4 text-center rounded shadow">
+                <img src="https://via.placeholder.com/100" class="mx-auto rounded-full mb-2">
+                <div class="font-semibold">Full name</div>
+                <div class="text-sm text-theme">Professional title</div>
+            </div>
+            <div class="bg-white p-4 text-center rounded shadow">
+                <img src="https://via.placeholder.com/100" class="mx-auto rounded-full mb-2">
+                <div class="font-semibold">Full name</div>
+                <div class="text-sm text-theme">Professional title</div>
+            </div>
+            <div class="bg-white p-4 text-center rounded shadow">
+                <img src="https://via.placeholder.com/100" class="mx-auto rounded-full mb-2">
+                <div class="font-semibold">Full name</div>
+                <div class="text-sm text-theme">Professional title</div>
+            </div>
+            <div class="bg-white p-4 text-center rounded shadow">
+                <img src="https://via.placeholder.com/100" class="mx-auto rounded-full mb-2">
+                <div class="font-semibold">Full name</div>
+                <div class="text-sm text-theme">Professional title</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-10 px-4">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-4 gap-6">
+            <div>
+                <img src="logo.svg" alt="Logo" class="h-6 mb-2">
+            </div>
+            <div>
+                <h4 class="font-semibold mb-2">Product</h4>
+                <ul class="text-sm space-y-1">
+                    <li><a href="#" class="hover:underline">Features</a></li>
+                    <li><a href="#" class="hover:underline">Pricing</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-2">Resources</h4>
+                <ul class="text-sm space-y-1">
+                    <li><a href="#" class="hover:underline">Blog</a></li>
+                    <li><a href="#" class="hover:underline">User guides</a></li>
+                    <li><a href="#" class="hover:underline">Webinars</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold mb-2">Company</h4>
+                <ul class="text-sm space-y-1">
+                    <li><a href="#" class="hover:underline">About</a></li>
+                    <li><a href="#" class="hover:underline">Join us</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="text-center text-sm text-gray-400 mt-6">© 2022 Brand, Inc. • Privacy • Terms • Sitemap</div>
+    </footer>
+</body>
+
+</html>

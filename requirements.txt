@@ -1,0 +1,9 @@
+Flask
+Flask-CORS
+Flask-JWT-Extended
+python-dotenv
+mongoengine
+apscheduler
+google-auth
+midtransclient
+Pillow
