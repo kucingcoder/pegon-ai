@@ -21,6 +21,8 @@ snap = midtransclient.Snap(
     server_key = MIDTRANS_SERVER_KEY
 )
 
+print(f'Payment Settings {MIDTRANS_SERVER_TYPE}')
+
 payment_bp = Blueprint('payment', __name__)
 
 @payment_bp.route('/payment', methods=['POST'])

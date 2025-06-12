@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 import hashlib
 import os
-from flask import Blueprint, flash, redirect, render_template, request, session, url_for
+from flask import Blueprint, flash, redirect, render_template, request, session
 from models.admin import Admin
 from models.tutorial import Tutorial
 from utils import to_webp

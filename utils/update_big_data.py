@@ -49,6 +49,6 @@ def update_big_data():
             )
             statistik.save()
 
-        print(f'Statistic updated successfully at {last_updated_dt}')
+        print(f'Statistic updated successfully')
     else:
         print('Failed to update statistic')

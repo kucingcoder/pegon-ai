@@ -13,7 +13,6 @@ class User(Document):
     api_key = StringField(required=True, unique=True)
     status = StringField(default='active', choices=('active', 'suspend'))
     category = StringField(default='free', choices=('free', 'pro'))
-    role = StringField(default='user', choices=('user', 'admin'))
     
     created_at = DateTimeField(default=lambda: datetime.now(timezone.utc))
     updated_at = DateTimeField(default=lambda: datetime.now(timezone.utc))
