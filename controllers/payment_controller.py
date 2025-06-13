@@ -94,7 +94,8 @@ def payment():
 @jwt_required()
 def history():
     current_user = get_jwt_identity()
-    payments = Payment.objects(user_id=current_user)
+    payments = Payment.objects(user_id=current_user, status='settlement').order_by('-updated_at')
+
     return jsonify({
         'code': 200,
         'status': 'ok',
