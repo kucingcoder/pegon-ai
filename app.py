@@ -6,7 +6,7 @@ from flask import Flask, render_template
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from mongoengine import connect
-from controllers import user_bp, otp_bp, tutorial_bp, transliterate_bp, visualization_bp, payment_bp, admin_bp
+from controllers import user_bp, otp_bp, tutorial_bp, transliterate_bp, visualization_bp, plugins_bp, payment_bp, admin_bp
 from models.admin import Admin
 from models.statistik_satuan_pendidikan import StatistikSatuanPendidikan
 from models.tutorial import Tutorial
@@ -69,6 +69,7 @@ app.register_blueprint(otp_bp, url_prefix='/api/otp')
 app.register_blueprint(tutorial_bp, url_prefix='/api/tutorial')
 app.register_blueprint(transliterate_bp, url_prefix='/api/transliterate')
 app.register_blueprint(visualization_bp, url_prefix='/api/visualization')
+app.register_blueprint(plugins_bp, url_prefix='/api/plugins')
 app.register_blueprint(payment_bp, url_prefix='/api/payment')
 app.register_blueprint(admin_bp, url_prefix='/')
 

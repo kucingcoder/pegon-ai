@@ -3,5 +3,6 @@ from controllers.otp_controller import otp_bp
 from controllers.tutorial_controller import tutorial_bp
 from controllers.transliterate_controller import transliterate_bp
 from controllers.visualization_controller import visualization_bp
+from controllers.plugins_controller import plugins_bp
 from controllers.payment_controller import payment_bp
 from controllers.admin_controller import admin_bp
