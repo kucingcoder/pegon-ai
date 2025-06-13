@@ -1,9 +1,10 @@
+python-dotenv
 Flask
 Flask-CORS
 Flask-JWT-Extended
-python-dotenv
 mongoengine
-apscheduler
 google-auth
-midtransclient
+apscheduler
 Pillow
+llama-cpp-python
+midtransclient

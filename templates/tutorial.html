@@ -50,7 +50,7 @@
         <div class="grid gap-6 md:grid-cols-3">
             {% for tutorial in tutorials %}
             <div class="bg-white rounded shadow hover:shadow-md transition overflow-hidden">
-                <img src="{{ tutorial.thumbnail }}" alt="{{ tutorial.name }} thumbnail"
+                <img src="{{ APP_URL + '/api/tutorial/thumbnail/' + tutorial.thumbnail }}" alt="{{ tutorial.name }} thumbnail"
                     class="w-full h-48 object-cover">
                 <div class="p-4">
                     <h2 class="text-lg font-bold mb-2">{{ tutorial.name }}</h2>
