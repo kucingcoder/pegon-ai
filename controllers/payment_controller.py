@@ -88,6 +88,19 @@ def payment():
             'status': 'bad request',
             'message': 'can\'t create transaction'
         }), 400
+    
+@payment_bp.route('/history', methods=['GET'])
+@require_api_key()
+@jwt_required()
+def history():
+    current_user = get_jwt_identity()
+    payments = Payment.objects(user_id=current_user)
+    return jsonify({
+        'code': 200,
+        'status': 'ok',
+        'message': 'payments retrieved successfully',
+        'data': [payment.to_mongo().to_dict() for payment in payments]
+    }), 200
 
 # KUHUSUS UNTUK MIDTRANS (WEBHOOK)
 @payment_bp.route('/notification', methods=['POST'])
