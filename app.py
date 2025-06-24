@@ -51,11 +51,6 @@ try:
 except Exception as e:
     exit(e)
 
-scheduler = BackgroundScheduler()
-scheduler.add_job(expired_pro, 'cron', hour=0, minute=0)
-scheduler.add_job(update_big_data, 'cron', hour=0, minute=0)
-scheduler.start()
-
 app = Flask(__name__)
 CORS(app)
 app.secret_key = APP_KEY
@@ -107,6 +102,12 @@ def statistic():
         fields=fields,
         values=values
     )
+
+update_big_data()
+scheduler = BackgroundScheduler()
+scheduler.add_job(expired_pro, 'cron', hour=0, minute=0)
+scheduler.add_job(update_big_data, 'cron', hour=0, minute=0)
+scheduler.start()
 
 if __name__ == '__main__':
     app.run()
