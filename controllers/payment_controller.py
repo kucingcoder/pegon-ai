@@ -111,11 +111,22 @@ def history():
         total = payments_query.count()
         payments = payments_query.skip(skip).limit(limit)
 
+        data = []
+        for item in payments:
+            doc = item.to_mongo().to_dict()
+            data.append({
+                "product": doc.get("product"),
+                "price": doc.get("price"),
+                "status": doc.get("status"),
+                "created_at": item.created_at.strftime("%d %b %Y") if item.created_at else None,
+                "updated_at": item.updated_at.strftime("%d %b %Y") if item.updated_at else None,
+            })
+
         return jsonify({
             'code': 200,
             'status': 'ok',
             'message': 'payments retrieved successfully',
-            'data': [payment.to_mongo().to_dict() for payment in payments],
+            'data': data,
             'pagination': {
                 'page': page,
                 'limit': limit,
