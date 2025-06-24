@@ -125,6 +125,7 @@ def history():
         }), 200
 
     except Exception as e:
+        print(e)
         return jsonify({
             'code': 500,
             'status': 'error',
