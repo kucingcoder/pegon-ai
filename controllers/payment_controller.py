@@ -118,7 +118,6 @@ def history():
                 "product": doc.get("product"),
                 "price": "Rp." + "{:,}".format(int(doc.get("price") or 0)).replace(",", "."),
                 "status": doc.get("status"),
-                "created_at": item.created_at.strftime("%d %b %Y") if item.created_at else None,
                 "updated_at": item.updated_at.strftime("%d %b %Y") if item.updated_at else None,
             })
 
@@ -136,7 +135,6 @@ def history():
         }), 200
 
     except Exception as e:
-        print(e)
         return jsonify({
             'code': 500,
             'status': 'error',
