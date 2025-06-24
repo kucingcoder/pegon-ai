@@ -254,8 +254,7 @@ def profile():
             'name': user.name,
             'sex': user.sex,
             'date_of_birth': user.date_of_birth.strftime("%Y-%m-%d") if user.date_of_birth else None,
-            'category': user.category,
-            'join': user.created_at.strftime("%Y")
+            'category': user.category
         }
 
     return jsonify(
