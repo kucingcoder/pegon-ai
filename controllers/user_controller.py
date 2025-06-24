@@ -255,7 +255,7 @@ def profile():
             'sex': user.sex,
             'date_of_birth': user.date_of_birth.strftime("%Y-%m-%d") if user.date_of_birth else None,
             'category': user.category,
-            'expired': 'has no expiration date' if user.category == 'free' else user.expired_at.strftime("%d/%m/%Y")
+            'expired': 'has no expiration date' if user.category == 'free' else f'expired at {user.expired_at.strftime("%d/%m/%Y")}'
         }
 
     return jsonify(
