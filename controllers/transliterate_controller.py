@@ -174,7 +174,7 @@ def image_to_text():
     to_webp(input_path, output_path)
 
     history = History(
-        user_id=get_jwt_identity(),
+        user_id=user.id,
         image=output_filename,
         text='Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis dui, accumsan sit amet ornare aliquam, convallis at nunc. Suspendisse nibh elit, molestie ac mi et, ullamcorper sagittis elit. Maecenas et lacinia lectus. Aliquam sodales accumsan massa, nec sodales urna euismod quis. Pellentesque quis dolor id ex egestas porttitor tristique quis massa. Nam et quam congue, scelerisque urna ut, faucibus urna. Nam dignissim libero quis quam suscipit porta. Sed suscipit interdum ligula, at tempus metus condimentum non. Pellentesque dolor ex, varius quis nunc at, dapibus dictum turpis. Ut vehicula scelerisque quam, sed convallis elit. Duis ut venenatis augue, a auctor leo. Ut bibendum mi eu magna malesuada, sit amet interdum tortor accumsan.',
         created_at=datetime.now(timezone.utc),
@@ -183,7 +183,7 @@ def image_to_text():
     history.save()
 
     device = request.headers.get('Device') or 'Unknown'
-    log(get_jwt_identity(), 'successfully transliterate an image', device)
+    log(user.id, 'successfully transliterate an image', device)
 
     return jsonify(
         {
