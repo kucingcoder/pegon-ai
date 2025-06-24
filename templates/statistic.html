@@ -7,12 +7,13 @@
     <title>Statistik Satuan Pendidikan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script> <!-- d3.js -->
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
     <style>
-        /* Style khusus untuk treemap */
         #treemap {
             width: 100%;
             height: 400px;
+            position: relative;
+            font-family: sans-serif;
         }
 
         .node {
@@ -24,13 +25,19 @@
             box-sizing: border-box;
             padding: 2px;
         }
+
+        @media (max-width: 768px) {
+            .node {
+                font-size: 10px;
+            }
+        }
     </style>
 </head>
 
 <body class="bg-gray-50 text-gray-900">
 
     <!-- Header -->
-    <div class="text-center mt-8">
+    <div class="text-center mt-8 px-4">
         <h1 class="text-3xl font-bold text-gray-900">
             <span class="text-blue-600">Statistik</span> Satuan Pendidikan <span class="text-gray-900">Analysis</span>
         </h1>
@@ -50,10 +57,10 @@
     </div>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto p-6 space-y-12">
+    <main class="max-w-7xl mx-auto p-4 md:p-6 space-y-12">
 
         <!-- Charts -->
-        <div class="grid md:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="bg-white p-4 rounded shadow">
                 <h2 class="text-xl font-semibold mb-4">Diagram Batang</h2>
                 <canvas id="barChart"></canvas>
@@ -71,7 +78,7 @@
         <!-- Table -->
         <div class="bg-white rounded-xl shadow p-6 mt-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Tabel</h2>
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto w-full">
                 <table class="min-w-full divide-y divide-gray-200 text-sm">
                     <thead class="bg-gray-50">
                         <tr>
@@ -149,7 +156,7 @@
             }
         });
 
-        // Treemap with d3.js
+        // Treemap
         const data = {
             name: "root",
             children: fields.map((f, i) => ({
@@ -171,13 +178,11 @@
 
         treemapLayout(root);
 
-        const color = d3.scaleOrdinal()
-            .range(d3.schemeTableau10);
-
+        const color = d3.scaleOrdinal().range(d3.schemeTableau10);
         const container = d3.select('#treemap');
-        container.selectAll('*').remove(); // Clear if needed
+        container.selectAll('*').remove();
 
-        const nodes = container.selectAll('div')
+        container.selectAll('div')
             .data(root.leaves())
             .enter()
             .append('div')
@@ -193,17 +198,7 @@
             .style('font-size', '12px')
             .style('overflow', 'hidden')
             .text(d => d.data.name + ' (' + d3.format(',')(d.value) + ')');
-
     </script>
-
-    <style>
-        /* position absolute untuk node di treemap container relative */
-        #treemap {
-            position: relative;
-            font-family: sans-serif;
-        }
-    </style>
-
 </body>
 
 </html>
