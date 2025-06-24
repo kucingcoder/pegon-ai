@@ -70,7 +70,7 @@ def payment():
 
     try:
         transaction = snap.create_transaction(param)
-        log(get_jwt_identity(), 'create payment for upgrade to pro', device)
+        log(user.id, 'create payment for upgrade to pro', device)
 
         return jsonify({
             'code': 201,
@@ -156,9 +156,10 @@ def notif():
         if transaction_status == 'settlement':
             user.category = 'pro'
             user.expired_at = datetime.now(timezone.utc).date() + timedelta(days=30)
-            log(get_jwt_identity(), 'account upgraded to pro', 'System')
+            log(user.id, 'account upgraded to pro', 'System')
         payment.status = transaction_status
     else:
+        log(user.id, 'cancel payment for upgrade to pro', 'System')
         payment.status = 'cancel'
 
     user.save()
