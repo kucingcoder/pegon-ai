@@ -116,7 +116,7 @@ def history():
             doc = item.to_mongo().to_dict()
             data.append({
                 "product": doc.get("product"),
-                "price": doc.get("price"),
+                "price": "Rp." + "{:,}".format(int(doc.get("price") or 0)).replace(",", "."),
                 "status": doc.get("status"),
                 "created_at": item.created_at.strftime("%d %b %Y") if item.created_at else None,
                 "updated_at": item.updated_at.strftime("%d %b %Y") if item.updated_at else None,
