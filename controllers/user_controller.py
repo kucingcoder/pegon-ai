@@ -168,8 +168,8 @@ def login():
         }
     ), 200
 
-@user_bp.route('/login-with-google', methods=['POST'])
-def login_with_google():
+@user_bp.route('/continue-with-google', methods=['POST'])
+def continue_with_google():
     data = request.get_json()
 
     if 'token_id' not in data or data['token_id'] == '':
