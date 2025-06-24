@@ -14,8 +14,7 @@ transliterate_bp = Blueprint('transliterate', __name__)
 APP_URL = os.environ.get('APP_URL')
 
 def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg'}
 
 @transliterate_bp.route('/history', methods=['GET'])
 @require_api_key()
@@ -184,7 +183,7 @@ def image_to_text():
     history.save()
 
     device = request.headers.get('Device') or 'Unknown'
-    log(get_jwt_identity(), 'success image transliteration', device)
+    log(get_jwt_identity(), 'successfully transliterate an image', device)
 
     return jsonify(
         {

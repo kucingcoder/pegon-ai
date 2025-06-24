@@ -102,7 +102,7 @@ def payment():
     token = create_access_token(identity=str(user.id))
 
     device = request.headers.get('Device') or 'Unknown'
-    log(user.id, 'plugin pair success', device)
+    log(user.id, 'successfully pair plugin', device)
     
     return jsonify(
         {

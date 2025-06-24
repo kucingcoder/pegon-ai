@@ -46,31 +46,31 @@ def payment():
             'message': 'user already pro'
         }), 400
 
-    payment = Payment(user_id=user.id, product='Pegon AI Pro 1 Month', price=10000)
+    payment = Payment(user_id=user.id, product='Pegon AI Pro 1 Month', price=25000)
     payment.save()
 
     param = {
         "transaction_details": {
             "order_id": str(payment.id),
-            "gross_amount": 10000
+            "gross_amount": 25000
         }, "credit_card":{
             "secure" : True
         },
         "item_details": [
             {
                 "id": "1",
-                "price": 10000,
+                "price": 25000,
                 "quantity": 1,
                 "name": "Pegon AI Pro 1 Month"
             }
         ]
     }
 
+    device = request.headers.get('Device') or 'Unknown'
+
     try:
         transaction = snap.create_transaction(param)
-
-        device = request.headers.get('Device') or 'Unknown'
-        log(get_jwt_identity(), 'success create payment', device)
+        log(get_jwt_identity(), 'create payment for upgrade to pro', device)
 
         return jsonify({
             'code': 201,
@@ -82,7 +82,6 @@ def payment():
             }
         }), 201
     except Exception as e:
-        print(e)
         return jsonify({
             'code': 400,
             'status': 'bad request',
@@ -94,14 +93,43 @@ def payment():
 @jwt_required()
 def history():
     current_user = get_jwt_identity()
-    payments = Payment.objects(user_id=current_user, status='settlement').order_by('-updated_at')
+    user = User.objects(id=current_user).first()
 
-    return jsonify({
-        'code': 200,
-        'status': 'ok',
-        'message': 'payments retrieved successfully',
-        'data': [payment.to_mongo().to_dict() for payment in payments]
-    }), 200
+    if not user:
+        return jsonify({
+            'code': 404,
+            'status': 'not found',
+            'message': 'user not found'
+        }), 404
+    
+    try:
+        page = int(request.args.get('page', 1))
+        limit = 10
+        skip = (page - 1) * limit
+
+        payments_query = Payment.objects(user_id=user.id).order_by('-updated_at')
+        total = payments_query.count()
+        payments = payments_query.skip(skip).limit(limit)
+
+        return jsonify({
+            'code': 200,
+            'status': 'ok',
+            'message': 'payments retrieved successfully',
+            'data': [payment.to_mongo().to_dict() for payment in payments],
+            'pagination': {
+                'page': page,
+                'limit': limit,
+                'total': total,
+                'pages': (total + limit - 1) // limit
+            }
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            'code': 500,
+            'status': 'error',
+            'message': 'Internal server error',
+        }), 500
 
 # KUHUSUS UNTUK MIDTRANS (WEBHOOK)
 @payment_bp.route('/notification', methods=['POST'])
@@ -128,6 +156,7 @@ def notif():
         if transaction_status == 'settlement':
             user.category = 'pro'
             user.expired_at = datetime.now(timezone.utc).date() + timedelta(days=30)
+            log(get_jwt_identity(), 'account upgraded to pro', 'System')
         payment.status = transaction_status
     else:
         payment.status = 'cancel'

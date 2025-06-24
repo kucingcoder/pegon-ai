@@ -32,7 +32,7 @@ def resend():
     return jsonify(
             {
                 'code': 200,
-                'status': '0k',
+                'status': 'ok',
                 'message': 'verification code resent successfully'
             }
         ), 200
@@ -72,12 +72,12 @@ def verification():
     token = create_access_token(identity=str(user.id))
 
     device = request.headers.get('Device') or 'Unknown'
-    log(user.id, 'success whatsapp verification', device)
+    log(user.id, 'successfully logged in via whatsapp', device)
 
     return jsonify(
             {
                 'code': 200,
-                'status': '0k',
+                'status': 'ok',
                 'message': 'phone number verification successfully',
                 'access_token': token
             }

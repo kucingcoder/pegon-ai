@@ -10,8 +10,7 @@ def hash_password(password):
     return hashlib.md5(password.encode()).hexdigest()
 
 def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg'}
 
 admin_bp = Blueprint('admin', __name__)
 

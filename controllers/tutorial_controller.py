@@ -7,8 +7,7 @@ tutorial_bp = Blueprint('tutorial', __name__)
 APP_URL = os.environ.get('APP_URL')
 
 def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg'}
 
 @tutorial_bp.route('/list', methods=['GET'])
 def get_tutorials():

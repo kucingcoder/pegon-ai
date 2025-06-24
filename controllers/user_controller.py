@@ -7,6 +7,7 @@ from flask import Blueprint, request, jsonify
 from google.auth.transport.requests import Request
 from google.oauth2 import id_token
 from middleware.require_api_key import require_api_key
+from models.log_activity import LogActivity
 from models.user import User
 from models.otp import Otp
 from datetime import datetime, timezone
@@ -100,7 +101,7 @@ def register():
     threading.Thread(target=send_wa, args=(phone_number, otp.code)).start()
 
     device = request.headers.get('Device') or 'Unknown'
-    log(user.id, 'success register', device)
+    log(user.id, 'successfully registered via whatsapp', device)
 
     return jsonify(
         {
@@ -157,9 +158,6 @@ def login():
         otp.save()
 
     threading.Thread(target=send_wa, args=(phone_number, otp.code)).start()
-
-    device = request.headers.get('Device') or 'Unknown'
-    log(user.id, 'success login', device)
 
     return jsonify(
         {
@@ -223,12 +221,12 @@ def login_with_google():
     token = create_access_token(identity=str(user.id))
 
     device = request.headers.get('Device') or 'Unknown'
-    log(user.id, 'success continue with google', device)
+    log(user.id, 'successfully logged in via google', device)
 
     return jsonify(
             {
                 'code': 200,
-                'status': '0k',
+                'status': 'ok',
                 'message': 'continue with google successfully',
                 'api_key': user.api_key,
                 'access_token': token
@@ -259,9 +257,6 @@ def profile():
             'category': user.category,
             'join': user.created_at.strftime("%Y")
         }
-    
-    device = request.headers.get('Device') or 'Unknown'
-    log(user.id, 'get profile', device)
 
     return jsonify(
         {
@@ -333,7 +328,7 @@ def profile_update():
     user.save()
 
     device = request.headers.get('Device') or 'Unknown'
-    log(user.id, 'update profile', device)
+    log(user.id, 'successfully updated profile', device)
 
     return jsonify(
         {
@@ -342,3 +337,51 @@ def profile_update():
             'message': 'profile updated successfully'
         }
     ), 200
+
+@user_bp.route('/activity', methods=['GET'])
+@require_api_key()
+@jwt_required()
+def activity():
+    current_user = get_jwt_identity()
+    user = User.objects(id=current_user).first()
+
+    if not user:
+        return jsonify({
+            'code': 404,
+            'status': 'not found',
+            'message': 'user not found'
+        }), 404
+
+    try:
+        page = int(request.args.get('page', 1))
+        limit = 10
+        skip = (page - 1) * limit
+
+        total_logs = LogActivity.objects(user_id=user.id).count()
+
+        logs = LogActivity.objects(user_id=user.id).order_by('-timestamp').skip(skip).limit(limit)
+
+        data = [{
+            'activity': log.activity,
+            'device': log.device,
+            'timestamp': log.timestamp.strftime("%d/%m/%Y - %H:%M") if log.timestamp else None
+        } for log in logs]
+
+        return jsonify({
+            'code': 200,
+            'status': 'success',
+            'data': data,
+            'pagination': {
+                'total': total_logs,
+                'page': page,
+                'limit': limit,
+                'pages': (total_logs + limit - 1) // limit
+            }
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            'code': 500,
+            'status': 'error',
+            'message': 'internal server error',
+        }), 500
