@@ -8,15 +8,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
     <script>
-        const url = "https://api.pegon.ai"
+        const url = "https://api.pegon.ai";
         let device = "";
         let plugin_id = "";
 
         async function QR() {
             if (plugin_id === "") {
-                const raw = JSON.stringify({
-                    "device": device,
-                });
+                const raw = JSON.stringify({ "device": device });
 
                 const requestOptions = {
                     method: "POST",
@@ -29,26 +27,19 @@
                 };
 
                 fetch(url + "/api/plugins/pair", requestOptions)
-                    .then((response) => {
-                        if (response.ok) {
-                            return response.json();
-                        } else {
-                            throw new Error("Failed to fetch data from server");
-                        }
+                    .then(response => {
+                        if (response.ok) return response.json();
+                        throw new Error("Failed to fetch data from server");
                     })
-                    .then((result) => {
+                    .then(result => {
                         plugin_id = result.plugin_id;
                         console.log("Plugin ID:", plugin_id);
                         const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${plugin_id}`;
                         document.getElementById("qr-code").src = qrCodeUrl;
                     })
-                    .catch((error) => {
-                        console.error(error);
-                    });
+                    .catch(error => console.error(error));
             } else {
-                const raw = JSON.stringify({
-                    "plugin_id": plugin_id
-                });
+                const raw = JSON.stringify({ "plugin_id": plugin_id });
 
                 const requestOptions = {
                     method: "POST",
@@ -61,32 +52,18 @@
                 };
 
                 fetch(url + "/api/plugins/check", requestOptions)
-                    .then((response) => {
-                        if (response.ok) {
-                            return response.json();
-                        }
-                    })
-                    .then((result) => {
-                        if (!result || !result.access_token || !result.api_key) {
-                            return;
-                        }
+                    .then(response => response.ok ? response.json() : null)
+                    .then(result => {
+                        if (!result || !result.access_token || !result.api_key) return;
 
-                        let access_token = result.access_token;
-                        let api_key = result.api_key;
+                        // Save to localStorage
+                        localStorage.setItem("access_token", result.access_token);
+                        localStorage.setItem("api_key", result.api_key);
+                        localStorage.setItem("plugin_id", plugin_id);
 
-                        Office.context.document.settings.set("access_token", access_token);
-                        Office.context.document.settings.set("api_key", api_key);
-                        Office.context.document.settings.set("plugin_id", plugin_id);
-                        
-                        Office.context.document.settings.saveAsync((asyncResult) => {
-                            if (asyncResult.status === Office.AsyncResultStatus.Succeeded) {
-                                window.location.href = "/api/plugins/word";
-                            }
-                        });
+                        window.location.href = "/api/plugins/word";
                     })
-                    .catch((error) => {
-                        console.error(error);
-                    });
+                    .catch(error => console.error(error));
             }
         }
 
@@ -99,7 +76,6 @@
                 const shortVersion = `${versionParts[0]}.${versionParts[1]}.${versionParts[2]}`;
 
                 device = `${host} ${shortVersion}`;
-
                 QR();
                 setInterval(QR, 5000);
             }
@@ -112,9 +88,10 @@
         <h1 class="text-2xl font-bold mb-2 text-gray-800">Pair Plugin</h1>
         <p class="text-gray-600 mb-6">Scan the QR code below using Pegon AI mobile app to connect this plugin.</p>
         <div class="flex justify-center mb-6">
-            <img id="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=PAIR-ID-HERE" alt="QR Code"
-                class="w-44 h-44 rounded-md border border-gray-300 shadow-sm">
+            <img id="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=PAIR-ID-HERE"
+                alt="QR Code" class="w-44 h-44 rounded-md border border-gray-300 shadow-sm">
         </div>
     </div>
 </body>
+
 </html>
