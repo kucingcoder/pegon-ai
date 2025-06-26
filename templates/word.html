@@ -50,8 +50,6 @@
             }
 
         async function check() {
-            const token = Office.context.document.settings.get("access_token");
-            const apiKey = Office.context.document.settings.get("api_key");
             const plugin_id = Office.context.document.settings.get("plugin_id");
 
             const raw = JSON.stringify({
@@ -74,9 +72,10 @@
                         return response.json();
                     }
                 })
-                .then((result) => {
+                .then( async (result) => {
+                    console.log(result);
                     if (!result || !result.access_token || !result.api_key) {
-                        logout();
+                        //await logout();
                     }
                 })
                 .catch((error) => {
