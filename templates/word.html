@@ -10,15 +10,15 @@
         const url = "https://api.pegon.ai"
 
         async function logout() {
-                const plugin_id = Office.context.roamingSettings.set.get("plugin_id");
-                const token = Office.context.roamingSettings.set.get("access_token");
-                const apiKey = Office.context.roamingSettings.set.get("api_key");
+                const plugin_id = Office.context.roamingSettings.get("plugin_id");
+                const token = Office.context.roamingSettings.get("access_token");
+                const apiKey = Office.context.roamingSettings.get("api_key");
                 
-                Office.context.roamingSettings.set.set("access_token", null);
-                Office.context.roamingSettings.set.set("api_key", null);
-                Office.context.roamingSettings.set.set("plugin_id", null);
+                Office.context.roamingSettings.set("access_token", null);
+                Office.context.roamingSettings.set("api_key", null);
+                Office.context.roamingSettings.set("plugin_id", null);
 
-                Office.context.roamingSettings.set.saveAsync(async function (asyncResult) {
+                Office.context.document.settings.saveAsync(async function (asyncResult) {
                     if (asyncResult.status === Office.AsyncResultStatus.Succeeded) {
                         const raw = JSON.stringify({
                             "plugin_id": plugin_id
@@ -50,7 +50,7 @@
             }
 
         async function check() {
-            const plugin_id = Office.context.roamingSettings.set.get("plugin_id");
+            const plugin_id = Office.context.roamingSettings.get("plugin_id");
 
             const raw = JSON.stringify({
                 "plugin_id": plugin_id
@@ -73,9 +73,9 @@
                     }
                 })
                 .then( async (result) => {
-                    console.log(result);
+                    console
                     if (!result || !result.access_token || !result.api_key) {
-                        await logout();
+                        //await logout();
                     }
                 })
                 .catch((error) => {
@@ -84,9 +84,9 @@
         }
         
         Office.onReady( () => {
-            const token = Office.context.roamingSettings.set.get("access_token");
-            const apiKey = Office.context.roamingSettings.set.get("api_key");
-            const plugin_id = Office.context.roamingSettings.set.get("plugin_id");
+            const token = Office.context.roamingSettings.get("access_token");
+            const apiKey = Office.context.roamingSettings.get("api_key");
+            const plugin_id = Office.context.roamingSettings.get("plugin_id");
 
             if (!token || !apiKey || !plugin_id) { window.location.href = "/api/plugins/word-login"; }
             
@@ -131,9 +131,9 @@
                 return;
             }
 
-            const token = Office.context.roamingSettings.set.get("access_token");
-            const apiKey = Office.context.roamingSettings.set.get("api_key");
-            const plugin_id = Office.context.roamingSettings.set.get("plugin_id");
+            const token = Office.context.roamingSettings.get("access_token");
+            const apiKey = Office.context.roamingSettings.get("api_key");
+            const plugin_id = Office.context.roamingSettings.get("plugin_id");
 
             const myHeaders = new Headers();
             myHeaders.append("X-API-Key", apiKey);

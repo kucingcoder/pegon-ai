@@ -74,11 +74,11 @@
                         let access_token = result.access_token;
                         let api_key = result.api_key;
 
-                        Office.context.roamingSettings.set.set("access_token", access_token);
-                        Office.context.roamingSettings.set.set("api_key", api_key);
-                        Office.context.roamingSettings.set.set("plugin_id", plugin_id);
+                        Office.context.document.settings.set("access_token", access_token);
+                        Office.context.document.settings.set("api_key", api_key);
+                        Office.context.document.settings.set("plugin_id", plugin_id);
                         
-                        Office.context.roamingSettings.set.saveAsync((asyncResult) => {
+                        Office.context.document.settings.saveAsync((asyncResult) => {
                             if (asyncResult.status === Office.AsyncResultStatus.Succeeded) {
                                 console.log("Settings saved successfully.");
                                 window.location.href = "/api/plugins/word";
