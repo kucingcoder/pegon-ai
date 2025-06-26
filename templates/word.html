@@ -9,6 +9,20 @@
     <script>
         const url = "https://api.pegon.ai";
 
+        Office.onReady((info) => {
+                const token = localStorage.getItem("access_token");
+                const apiKey = localStorage.getItem("api_key");
+                const plugin_id = localStorage.getItem("plugin_id");
+
+                if (!token || !apiKey || !plugin_id) {
+                    window.location.href = "/api/plugins/word-login";
+                }
+
+                check();
+                setInterval(check, 60000);
+            });
+
+
         async function logout() {
             const plugin_id = localStorage.getItem("plugin_id");
             const token = localStorage.getItem("access_token");
