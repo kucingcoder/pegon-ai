@@ -11,6 +11,8 @@
 
         async function logout() {
                 const plugin_id = Office.context.document.settings.get("plugin_id");
+                const token = Office.context.document.settings.get("access_token");
+                const apiKey = Office.context.document.settings.get("api_key");
                 
                 Office.context.document.settings.set("access_token", null);
                 Office.context.document.settings.set("api_key", null);
@@ -22,12 +24,14 @@
                             "plugin_id": plugin_id
                         });
 
+                        const myHeaders = new Headers();
+                        myHeaders.append("X-API-Key", apiKey);
+                        myHeaders.append("Content-Type", "application/json");
+                        myHeaders.append("Authorization", "Bearer " + token);
+
                         const requestOptions = {
                             method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "Accept": "application/json"
-                            },
+                            headers: myHeaders,
                             body: raw,
                             redirect: "follow"
                         };
