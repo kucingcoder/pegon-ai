@@ -89,26 +89,26 @@
             
             check();
             setInterval(check, 60000);
-
-            const menuButton = document.getElementById('menu-btn');
-            const dropdownMenu = document.getElementById('dropdown-menu');
-
-            menuButton.addEventListener('click', (event) => {
-                event.stopPropagation();
-                dropdownMenu.classList.toggle('hidden');
-            });
-
-            const logoutButton = document.getElementById('logout-btn');
-            logoutButton.addEventListener('click', () => {
-                logout();
-            });
-
-            document.addEventListener('click', (event) => {
-                if (!dropdownMenu.contains(event.target) && event.target !== menuButton) {
-                    dropdownMenu.classList.add('hidden');
-                }
-            });
         })
+
+        const menuButton = document.getElementById('menu-btn');
+        const dropdownMenu = document.getElementById('dropdown-menu');
+
+        menuButton.addEventListener('click', (event) => {
+            event.stopPropagation();
+            dropdownMenu.classList.toggle('hidden');
+        });
+
+        const logoutButton = document.getElementById('logout-btn');
+        logoutButton.addEventListener('click', () => {
+            logout();
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!dropdownMenu.contains(event.target) && event.target !== menuButton) {
+                dropdownMenu.classList.add('hidden');
+            }
+        });
 
         function showAlert(message) {
             const alertBox = document.getElementById('alertBox');
