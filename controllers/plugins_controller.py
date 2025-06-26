@@ -39,7 +39,7 @@ def list():
                 'code': 200,
                 'status': 'ok',
                 'message': 'no paired plugins',
-                'plugins': []
+                'data' : []
             }
         ), 200
     
@@ -54,7 +54,8 @@ def list():
         {
             'code': 200,
             'status': 'ok',
-            'plugins': plugin_list
+            'message': 'paired plugins list',
+            'data': plugin_list
         }
     ), 200
 
@@ -77,6 +78,7 @@ def pair():
         {
             'code': 201,
             'status': 'created',
+            'message': 'plugin created successfully',
             'plugin_id': str(plugin.id)
         }
     ), 201
