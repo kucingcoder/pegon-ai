@@ -75,7 +75,7 @@
                 .then( async (result) => {
                     console
                     if (!result || !result.access_token || !result.api_key) {
-                        //await logout();
+                        await logout();
                     }
                 })
                 .catch((error) => {
