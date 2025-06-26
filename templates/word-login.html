@@ -80,10 +80,7 @@
                         
                         Office.context.document.settings.saveAsync((asyncResult) => {
                             if (asyncResult.status === Office.AsyncResultStatus.Succeeded) {
-                                console.log("Settings saved successfully.");
                                 window.location.href = "/api/plugins/word";
-                            } else {
-                                console.error("Failed to save settings:", asyncResult.error.message);
                             }
                         });
                     })

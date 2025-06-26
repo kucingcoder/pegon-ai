@@ -8,20 +8,8 @@
     <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
     <script>
         const url = "https://api.pegon.ai"
-        
-        Office.onReady( () => {
-            const token = Office.context.document.settings.get("access_token");
-            const apiKey = Office.context.document.settings.get("api_key");
-            const plugin_id = Office.context.document.settings.get("plugin_id");
 
-            console.log("Access Token:", token);
-            console.log("API Key:", apiKey);
-            console.log("Plugin ID:", plugin_id);
-            return;
-
-            if (!token || !apiKey || !plugin_id) { window.location.href = "/api/plugins/word-login"; }
-
-            async function logout() {
+        async function logout() {
                 const plugin_id = Office.context.document.settings.get("plugin_id");
                 const token = Office.context.document.settings.get("access_token");
                 const apiKey = Office.context.document.settings.get("api_key");
@@ -94,6 +82,13 @@
                         console.error(error);
                     });
             }
+        
+        Office.onReady( () => {
+            const token = Office.context.document.settings.get("access_token");
+            const apiKey = Office.context.document.settings.get("api_key");
+            const plugin_id = Office.context.document.settings.get("plugin_id");
+
+            if (!token || !apiKey || !plugin_id) { window.location.href = "/api/plugins/word-login"; }
             
             check();
             setInterval(check, 60000);
