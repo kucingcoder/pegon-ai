@@ -10,12 +10,40 @@
         const url = "https://api.pegon.ai"
 
         async function logout() {
-            Office.context.document.settings.set("access_token", null);
-            Office.context.document.settings.set("api_key", null);
-            Office.context.document.settings.set("plugin_id", null);
-            Office.context.document.settings.saveAsync();
-            window.location.href = "/api/plugins/word-login";
-        }
+                const plugin_id = Office.context.document.settings.get("plugin_id");
+                
+                Office.context.document.settings.set("access_token", null);
+                Office.context.document.settings.set("api_key", null);
+                Office.context.document.settings.set("plugin_id", null);
+
+                Office.context.document.settings.saveAsync(async function (asyncResult) {
+                    if (asyncResult.status === Office.AsyncResultStatus.Succeeded) {
+                        const raw = JSON.stringify({
+                            "plugin_id": plugin_id
+                        });
+
+                        const requestOptions = {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Accept": "application/json"
+                            },
+                            body: raw,
+                            redirect: "follow"
+                        };
+
+                        try {
+                            await fetch(url + "/api/plugins/unpair", requestOptions);
+                        } catch (e) {
+                            console.error("Unpair request failed:", e);
+                        }
+
+                        window.location.href = "/api/plugins/word-login";
+                    } else {
+                        console.error("Failed to save settings:", asyncResult.error);
+                    }
+                });
+            }
 
         async function check() {
             const token = Office.context.document.settings.get("access_token");
@@ -139,7 +167,7 @@
                 redirect: "follow"
             };
 
-            fetch("http://127.0.0.1:5000/api/transliterate/text-to-text", requestOptions)
+            fetch(url + "/api/transliterate/text-to-text", requestOptions)
                 .then((response) => {
                     if (response.ok) {
                         return response.json();
