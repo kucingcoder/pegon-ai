@@ -89,25 +89,6 @@
             
             check();
             setInterval(check, 60000);
-        })
-
-        const menuButton = document.getElementById('menu-btn');
-        const dropdownMenu = document.getElementById('dropdown-menu');
-
-        menuButton.addEventListener('click', (event) => {
-            event.stopPropagation();
-            dropdownMenu.classList.toggle('hidden');
-        });
-
-        const logoutButton = document.getElementById('logout-btn');
-        logoutButton.addEventListener('click', () => {
-            logout();
-        });
-
-        document.addEventListener('click', (event) => {
-            if (!dropdownMenu.contains(event.target) && event.target !== menuButton) {
-                dropdownMenu.classList.add('hidden');
-            }
         });
 
         function showAlert(message) {
@@ -222,6 +203,27 @@
             </ul>
         </div>
     </div>
+
+    <script>
+        const menuButton = document.getElementById('menu-btn');
+            const dropdownMenu = document.getElementById('dropdown-menu');
+
+            menuButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                dropdownMenu.classList.toggle('hidden');
+            });
+
+            const logoutButton = document.getElementById('logout-btn');
+            logoutButton.addEventListener('click', () => {
+                logout();
+            });
+
+            document.addEventListener('click', (event) => {
+                if (!dropdownMenu.contains(event.target) && event.target !== menuButton) {
+                    dropdownMenu.classList.add('hidden');
+                }
+            });
+    </script>
 
     <div id="alertBox" class="w-3/4 fixed top-0 mx-4 mt-4 bg-red-500 text-white p-4 rounded-lg shadow-lg hidden">
         <div class="flex items-center justify-between">
