@@ -10,7 +10,7 @@ from controllers import user_bp, otp_bp, tutorial_bp, transliterate_bp, visualiz
 from models.admin import Admin
 from models.statistik_satuan_pendidikan import StatistikSatuanPendidikan
 from models.tutorial import Tutorial
-from utils import expired_pro, update_big_data
+from utils import expired_plugin_pair, expired_pro, update_big_data
 from apscheduler.schedulers.background import BackgroundScheduler
 
 folders = [
@@ -107,6 +107,7 @@ update_big_data()
 scheduler = BackgroundScheduler()
 scheduler.add_job(expired_pro, 'cron', hour=0, minute=0)
 scheduler.add_job(update_big_data, 'cron', hour=0, minute=0)
+scheduler.add_job(expired_plugin_pair, 'cron', hour=0, minute=0)
 scheduler.start()
 
 if __name__ == '__main__':

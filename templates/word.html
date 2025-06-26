@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Word Plugins</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    <script>
+        const url = "http://127.0.0.1:5000"
+
+        async function logout() {
+            Office.context.document.settings.set("access_token", null);
+            Office.context.document.settings.set("api_key", null);
+            Office.context.document.settings.set("plugin_id", null);
+            Office.context.document.settings.saveAsync();
+            window.location.href = "/api/plugins/word-login";
+        }
+
+        async function check() {
+            const token = Office.context.document.settings.get("access_token");
+            const apiKey = Office.context.document.settings.get("api_key");
+            const plugin_id = Office.context.document.settings.get("plugin_id");
+
+            const raw = JSON.stringify({
+                "plugin_id": plugin_id
+            });
+
+            const requestOptions = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: raw,
+                redirect: "follow"
+            };
+
+            fetch(url + "/api/plugins/check", requestOptions)
+                .then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                })
+                .then((result) => {
+                    if (!result || !result.access_token || !result.api_key) {
+                        logout();
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        }
+        
+        Office.onReady( () => {
+            const token = Office.context.document.settings.get("access_token");
+            const apiKey = Office.context.document.settings.get("api_key");
+            const plugin_id = Office.context.document.settings.get("plugin_id");
+
+            if (!token || !apiKey || !plugin_id) { window.location.href = "/api/plugins/word-login"; }
+            
+            check();
+            setInterval(check, 60000);
+
+            const menuButton = document.getElementById('menu-btn');
+            const dropdownMenu = document.getElementById('dropdown-menu');
+
+            menuButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                dropdownMenu.classList.toggle('hidden');
+            });
+
+            const logoutButton = document.getElementById('logout-btn');
+            logoutButton.addEventListener('click', () => {
+                logout();
+            });
+
+            document.addEventListener('click', (event) => {
+                if (!dropdownMenu.contains(event.target) && event.target !== menuButton) {
+                    dropdownMenu.classList.add('hidden');
+                }
+            });
+        })
+
+        function showAlert(message) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.querySelector('p').textContent = message;
+            alertBox.classList.remove('hidden');
+        }
+
+        function closeAlert() {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.classList.add('hidden');
+        }
+
+        function loading() {
+            document.getElementById('button-text').classList.add('hidden');
+            document.getElementById('loading-spinner').classList.remove('hidden');
+
+            const button = document.getElementById('transliterate');
+            button.disabled = true;
+        }
+
+        function unloading() {
+            document.getElementById('button-text').classList.remove('hidden');
+            document.getElementById('loading-spinner').classList.add('hidden');
+
+            const button = document.getElementById('transliterate');
+            button.disabled = false;
+        }
+
+        async function transliterate() {
+            loading();
+            const inputText = document.getElementById("inputText").value;
+
+            if (!inputText) {
+                showAlert("Please enter text to transliterate.");
+                unloading();
+                return;
+            }
+
+            const token = Office.context.document.settings.get("access_token");
+            const apiKey = Office.context.document.settings.get("api_key");
+            const plugin_id = Office.context.document.settings.get("plugin_id");
+
+            const myHeaders = new Headers();
+            myHeaders.append("X-API-Key", apiKey);
+            myHeaders.append("Content-Type", "application/json");
+            myHeaders.append("Authorization", "Bearer " + token);
+
+            const raw = JSON.stringify({
+                "text": inputText,
+            });
+
+            const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: raw,
+                redirect: "follow"
+            };
+
+            fetch("http://127.0.0.1:5000/api/transliterate/text-to-text", requestOptions)
+                .then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error("Failed to transliterate text.");
+                    }
+                })
+                .then((result) => {
+                    if (result &&  result.data.text) {
+                        text = result.data.text;
+
+                        Word.run(function (context) {
+                            return context.sync()
+                                .then(function () {
+                                    const range = context.document.getSelection();
+                                    range.insertText(text, Word.InsertLocation.end);
+                                    return context.sync();
+                                })
+                                .catch(function (error) {
+                                    console.error("Error inserting text: " + error);
+                                    showAlert("Failed to insert transliterated text into the document.");
+                                });
+                        });
+                    } else {
+                        showAlert("Failed to transliterate text. Please try again.");
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                    showAlert("Failed to transliterate text. Please try again.");
+                });
+
+            unloading();
+        }
+    </script> 
+    <style>
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 h-screen w-screen">
+    <div class="relative">
+        <button class="text-2xl absolute top-4 right-8" id="menu-btn">&#x22EE;</button>
+    
+        <div id="dropdown-menu"
+            class="dropdown-menu hidden absolute top-12 right-4 bg-white border border-gray-300 rounded-lg shadow-lg w-40">
+            <ul>
+                <li>
+                    <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-500 hover:text-white hover:rounded-lg" id="logout-btn">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="alertBox" class="w-3/4 fixed top-0 mx-4 mt-4 bg-red-500 text-white p-4 rounded-lg shadow-lg hidden">
+        <div class="flex items-center justify-between">
+            <span class="font-bold">Failed</span>
+            <button onclick="closeAlert()" class="text-white hover:text-gray-200">&times;</button>
+        </div>
+        <p class="mt-2">This is an alert message.</p>
+    </div>
+
+    <div class="h-full w-full p-8 items-center justify-center">
+        <div class="flex flex-col items-center justify-center">
+            <h1 class="text-2xl font-bold mb-4">Latin To Pegon</h1>
+            <textarea id="inputText" rows="10"
+                class="mt-1 block w-full py-2 px-3 rounded-lg shadow-lg mb-4 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                placeholder="Enter text ..."></textarea>
+                <button id="transliterate" onclick="transliterate()"
+                    class="w-full px-4 py-2 bg-orange-500 text-white rounded-lg font-semibold shadow-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
+                    <span id="button-text">Transliterate</span>
+                    <span id="loading-spinner" class="hidden">...</span>
+                </button>
+        </div>
+    </div>
+</body>
+</html> 
