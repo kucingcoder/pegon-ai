@@ -154,7 +154,7 @@ def notif():
         
     transaction_status = data['transaction_status']
     order_id = data['order_id']
-    user_id = data['metadata']['user_id']
+    user_id = data['metadata']['user']
     device = data['metadata']['device']
 
     print(transaction_status, order_id, user_id, device)
