@@ -54,6 +54,8 @@
                 fetch(url + "/api/plugins/check", requestOptions)
                     .then(response => response.ok ? response.json() : null)
                     .then(result => {
+                        console.log("Check result:", result);
+                        
                         if (!result || !result.access_token || !result.api_key) return;
 
                         // Save to localStorage
