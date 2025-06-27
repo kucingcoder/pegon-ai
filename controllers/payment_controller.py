@@ -4,6 +4,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from datetime import datetime, timedelta, timezone
 from flask import Blueprint, jsonify, request
 from middleware.require_api_key import require_api_key
+from bson import ObjectId
 from models.payment import Payment
 from models.user import User
 from utils import log
@@ -46,24 +47,28 @@ def payment():
             'message': 'user already pro'
         }), 400
 
-    payment = Payment(user_id=user.id, product='Pegon AI Pro 1 Month', price=25000)
-    payment.save()
+    new_id = str(ObjectId())
 
     param = {
         "transaction_details": {
-            "order_id": str(payment.id),
-            "gross_amount": 25000
-        }, "credit_card":{
-            "secure" : True
+            "order_id": str(new_id),
+            "gross_amount": 19000
         },
         "item_details": [
             {
                 "id": "1",
-                "price": 25000,
+                "price": 17000,
                 "quantity": 1,
                 "name": "Pegon AI Pro 1 Month"
-            }
-        ]
+            },
+            {
+                "id": "2",
+                "price": 2000,
+                "quantity": 1,
+                "name": "Admin Fee"
+            },
+        ],
+        "user_id": str(user.id),
     }
 
     device = request.headers.get('Device') or 'Unknown'
@@ -77,7 +82,6 @@ def payment():
             'status': 'created',
             'message': 'transaction created',
             'data': {
-                'payment_id': str(payment.id),
                 'snap_token': str(transaction['token'])
             }
         }), 201
@@ -146,16 +150,26 @@ def history():
 def notif():
     data = request.get_json()
 
-    required_fields = ['transaction_status', 'order_id']
+    required_fields = ['transaction_status', 'order_id', 'user_id']
     for field in required_fields:
         if field not in data or data[field] == "":
             return jsonify(data), 200
         
     transaction_status = data['transaction_status']
     order_id = data['order_id']
+    user_id = data['user_id']
 
     payment = Payment.objects(id=order_id).first()
     if not payment:
+        if transaction_status == 'pending':
+            payment = Payment(
+                order_id = order_id,
+                product = 'Pegon AI Pro 1 Month',
+                price = 19000,
+                status = transaction_status,
+                user_id = user_id
+            )
+            payment.save()
         return jsonify(data), 200
     
     user = User.objects(id=payment.user_id.id).first()
