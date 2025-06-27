@@ -56,11 +56,14 @@
                         return response.json();
                     })
                     .then(result => {
-                        console.log(result.message);
+                        if (result.message == "invalid plugin id") {
+                            plugin_id = "";
+                            QR();
+                            return;
+                        }
                         
                         if (!result || !result.access_token || !result.api_key) return;
 
-                        // Save to localStorage
                         localStorage.setItem("access_token", result.access_token);
                         localStorage.setItem("api_key", result.api_key);
                         localStorage.setItem("plugin_id", plugin_id);
