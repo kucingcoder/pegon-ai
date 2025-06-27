@@ -49,6 +49,8 @@ def payment():
 
     new_id = str(ObjectId())
 
+    device = request.headers.get('Device') or 'Unknown'
+
     param = {
         "transaction_details": {
             "order_id": str(new_id),
@@ -69,13 +71,11 @@ def payment():
             },
         ],
         "user_id": str(user.id),
+        "device": device 
     }
-
-    device = request.headers.get('Device') or 'Unknown'
 
     try:
         transaction = snap.create_transaction(param)
-        log(user.id, 'create payment for upgrade to pro', device)
 
         return jsonify({
             'code': 201,
@@ -149,28 +149,31 @@ def history():
 @payment_bp.route('/notification', methods=['POST'])
 def notif():
     data = request.get_json()
-
-    required_fields = ['transaction_status', 'order_id', 'user_id']
-    for field in required_fields:
-        if field not in data or data[field] == "":
-            return jsonify(data), 200
         
     transaction_status = data['transaction_status']
     order_id = data['order_id']
-    user_id = data['user_id']
+    user_id = data['metadata']['extra_info']['user_id']
+    device = data['metadata']['extra_info']['device']
+
+    print(transaction_status, order_id, user_id, device)
+
+    return jsonify(data), 200
+
+    log(user.id, 'create payment for upgrade to pro', device)
 
     payment = Payment.objects(id=order_id).first()
     if not payment:
         if transaction_status == 'pending':
             payment = Payment(
-                order_id = order_id,
+                id = order_id,
                 product = 'Pegon AI Pro 1 Month',
                 price = 19000,
                 status = transaction_status,
                 user_id = user_id
             )
             payment.save()
-        return jsonify(data), 200
+            return jsonify(data), 200
+
     
     user = User.objects(id=payment.user_id.id).first()
     if not user:
