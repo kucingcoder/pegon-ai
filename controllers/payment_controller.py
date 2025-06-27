@@ -168,8 +168,8 @@ def notif():
                 user_id = user_id
             )
             payment.save()
-            log(user.id, 'create payment for upgrade to pro', device)
-            
+            log(user_id, 'create payment for upgrade to pro', device)
+
         return jsonify(data), 200
 
     
