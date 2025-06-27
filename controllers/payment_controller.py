@@ -157,12 +157,6 @@ def notif():
     user_id = data['metadata']['user']
     device = data['metadata']['device']
 
-    print(transaction_status, order_id, user_id, device)
-
-    return jsonify(data), 200
-
-    log(user.id, 'create payment for upgrade to pro', device)
-
     payment = Payment.objects(id=order_id).first()
     if not payment:
         if transaction_status == 'pending':
@@ -174,6 +168,7 @@ def notif():
                 user_id = user_id
             )
             payment.save()
+            log(user.id, 'create payment for upgrade to pro', device)
             return jsonify(data), 200
 
     
