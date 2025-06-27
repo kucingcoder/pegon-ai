@@ -70,8 +70,10 @@ def payment():
                 "name": "Admin Fee"
             },
         ],
-        "user_id": str(user.id),
-        "device": device 
+        "metadata": {
+            "device": device,
+            "user": str(user.id)
+        }
     }
 
     try:
