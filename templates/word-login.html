@@ -52,7 +52,9 @@
                 };
 
                 fetch(url + "/api/plugins/check", requestOptions)
-                    .then(response => response.ok ? response.json() : Promise.reject("Failed to fetch data from server"))
+                    .then(response => {
+                        return response.json();
+                    })
                     .then(result => {
                         console.log(result.message);
                         
