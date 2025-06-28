@@ -120,7 +120,7 @@ def generate_qrcode():
     qr.make(fit=True)
 
     img: PilImage = qr.make_image(
-        fill_color="#ff990e",
+        fill_color="black",
         back_color="white"
     )
 
