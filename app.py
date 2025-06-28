@@ -1,8 +1,10 @@
-import hashlib
 import os
+import hashlib
+import qrcode
+from io import BytesIO
 from dotenv import load_dotenv
 from urllib.parse import quote
-from flask import Flask, render_template
+from flask import Flask, render_template, request, send_file
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from mongoengine import connect
@@ -10,6 +12,7 @@ from controllers import user_bp, otp_bp, tutorial_bp, transliterate_bp, visualiz
 from models.admin import Admin
 from models.statistik_satuan_pendidikan import StatistikSatuanPendidikan
 from models.tutorial import Tutorial
+from qrcode.image.pil import PilImage
 from utils import expired_plugin_pair, expired_pro, update_big_data
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -102,6 +105,30 @@ def statistic():
         fields=fields,
         values=values
     )
+
+@app.route('/qrcode')
+def generate_qrcode():
+    data = request.args.get('data', 'Pegon AI')
+
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_H,
+        box_size=10,
+        border=1,
+    )
+    qr.add_data(data)
+    qr.make(fit=True)
+
+    img: PilImage = qr.make_image(
+        fill_color="#ff990e",
+        back_color="white"
+    )
+
+    buffer = BytesIO()
+    img.save(buffer, format='PNG')
+    buffer.seek(0)
+
+    return send_file(buffer, mimetype='image/png')
 
 update_big_data()
 scheduler = BackgroundScheduler()

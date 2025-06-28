@@ -6,5 +6,6 @@ mongoengine
 google-auth
 apscheduler
 Pillow
+qrcode
 llama-cpp-python
 midtransclient

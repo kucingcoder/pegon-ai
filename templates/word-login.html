@@ -34,7 +34,7 @@
                     .then(result => {
                         plugin_id = result.plugin_id;
                         console.log("Plugin ID:", plugin_id);
-                        const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${plugin_id}`;
+                        const qrCodeUrl = `${url}/qrcode?data=${plugin_id}`;
                         document.getElementById("qr-code").src = qrCodeUrl;
                     })
                     .catch(error => console.error(error));
@@ -95,8 +95,7 @@
         <h1 class="text-2xl font-bold mb-2 text-gray-800">Pair Plugin</h1>
         <p class="text-gray-600 mb-6">Scan the QR code below using Pegon AI mobile app to connect this plugin.</p>
         <div class="flex justify-center mb-6">
-            <img id="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=PAIR-ID-HERE"
-                alt="QR Code" class="w-44 h-44 rounded-md border border-gray-300 shadow-sm">
+            <img id="qr-code" alt="QR Code" class="w-44 h-44 rounded-lg shadow-sm">
         </div>
     </div>
 </body>
