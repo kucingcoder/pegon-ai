@@ -1,7 +1,7 @@
 from llama_cpp import Llama
 
 llm = Llama(
-    model_path="storage\models\pegon-ai-text.gguf",
+    model_path="storage/models/pegon-ai-text.gguf",
     n_ctx=2048,
     n_threads=4,
     temperature=0.3,
