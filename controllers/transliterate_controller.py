@@ -6,7 +6,7 @@ from middleware.require_api_key import require_api_key
 from datetime import datetime, timezone
 from models.free_usage import FreeUsage
 from models.user import User
-from utils import log, to_webp
+from utils import log, to_webp, text_transliterate
 from models.history import History
 
 transliterate_bp = Blueprint('transliterate', __name__)
@@ -207,10 +207,8 @@ def text_to_text():
             'status': 'bad request',
             'message': 'field text can\'t be empty'
         }), 400
-    
-    # nanti lakukan text transliteration disini
 
-    result = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ultrices, sem at tristique dignissim, velit metus.'
+    result = text_transliterate(text)
 
     return jsonify({
         'code': 200,
