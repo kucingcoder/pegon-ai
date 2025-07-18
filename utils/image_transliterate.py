@@ -47,6 +47,9 @@ def image_transliterate(image_path):
 
     adjusted_boxes.sort(key=lambda b: b[1])
 
+    if not adjusted_boxes:
+        return "No Pegon text detected in the image."
+
     results = ""
 
     for x1, y1, x2, y2 in adjusted_boxes:
