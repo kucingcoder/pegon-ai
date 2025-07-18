@@ -54,18 +54,18 @@ def payment():
     param = {
         "transaction_details": {
             "order_id": str(new_id),
-            "gross_amount": 19000
+            "gross_amount": 1000
         },
         "item_details": [
             {
                 "id": "1",
-                "price": 17000,
+                "price": 500,
                 "quantity": 1,
                 "name": "Pegon AI Pro 1 Month"
             },
             {
                 "id": "2",
-                "price": 2000,
+                "price": 500,
                 "quantity": 1,
                 "name": "Admin Fee"
             },
