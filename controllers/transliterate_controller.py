@@ -6,7 +6,7 @@ from middleware.require_api_key import require_api_key
 from datetime import datetime, timezone
 from models.free_usage import FreeUsage
 from models.user import User
-from utils import log, to_webp, text_transliterate
+from utils import log, to_webp, text_transliterate, image_transliterate
 from models.history import History
 
 transliterate_bp = Blueprint('transliterate', __name__)
@@ -166,7 +166,7 @@ def image_to_text():
 
     file.save(input_path)
 
-    # nanti lakukan image transliteration disini
+    image_transliterate(input_path)
 
     output_filename = f'{md5_hash}.webp'
     output_path = os.path.join('storage/images/histories', output_filename)
