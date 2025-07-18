@@ -1,9 +1,12 @@
 from llama_cpp import Llama
+import torch
+
+n = torch.get_num_threads() - 4
 
 llm = Llama(
     model_path="storage/models/pegon-ai-text.gguf",
     n_ctx=2048,
-    n_threads=4,
+    n_threads=n,
     temperature=0.3,
     top_p=0.8,
     repeat_penalty=1.2,
