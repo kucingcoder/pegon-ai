@@ -166,7 +166,7 @@ def image_to_text():
 
     file.save(input_path)
 
-    image_transliterate(input_path)
+    result = image_transliterate(input_path)
 
     output_filename = f'{md5_hash}.webp'
     output_path = os.path.join('storage/images/histories', output_filename)
@@ -176,7 +176,7 @@ def image_to_text():
     history = History(
         user_id=user.id,
         image=output_filename,
-        text='Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis dui, accumsan sit amet ornare aliquam, convallis at nunc. Suspendisse nibh elit, molestie ac mi et, ullamcorper sagittis elit. Maecenas et lacinia lectus. Aliquam sodales accumsan massa, nec sodales urna euismod quis. Pellentesque quis dolor id ex egestas porttitor tristique quis massa. Nam et quam congue, scelerisque urna ut, faucibus urna. Nam dignissim libero quis quam suscipit porta. Sed suscipit interdum ligula, at tempus metus condimentum non. Pellentesque dolor ex, varius quis nunc at, dapibus dictum turpis. Ut vehicula scelerisque quam, sed convallis elit. Duis ut venenatis augue, a auctor leo. Ut bibendum mi eu magna malesuada, sit amet interdum tortor accumsan.',
+        text=result,
         created_at=datetime.now(timezone.utc),
         updated_at=datetime.now(timezone.utc)
     )

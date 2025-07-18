@@ -46,6 +46,8 @@ def image_transliterate(image_path):
 
     adjusted_boxes.sort(key=lambda b: b[1])
 
+    results = ""
+
     for x1, y1, x2, y2 in adjusted_boxes:
         cropped = img.crop((x1, y1, x2, y2))
 
@@ -74,4 +76,7 @@ def image_transliterate(image_path):
 
         output_text = processor.tokenizer.decode(output_ids[0], skip_special_tokens=True)
         clean_output = output_text.split("Assistant:")[-1].strip()
-        print(clean_output)
+
+        results += clean_output + ". "
+
+    return results
