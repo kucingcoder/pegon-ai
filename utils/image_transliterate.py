@@ -1,7 +1,7 @@
 import torch
 from ultralytics import YOLO
-from PIL import Image, ImageOps
-from transformers import AutoProcessor, AutoModelForVision2Seq, TextStreamer
+from PIL import Image
+from transformers import AutoProcessor, AutoModelForVision2Seq
 
 torch.set_num_threads(torch.get_num_threads())
 torch.set_num_interop_threads(torch.get_num_threads())
@@ -18,9 +18,7 @@ model_vision = AutoModelForVision2Seq.from_pretrained(
 )
 
 def image_transliterate(image_path):  
-    img = Image.open(image_path)
-    print("EXIF:", img.getexif())
-    img = ImageOps.exif_transpose(img).convert("RGB")
+    img = Image.open(image_path).convert("RGB")
     orig_width, orig_height = img.size
 
     results = model_detect(image_path, imgsz=640, augment=False)[0]
