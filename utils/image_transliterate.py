@@ -19,10 +19,9 @@ model_vision = AutoModelForVision2Seq.from_pretrained(
 
 def image_transliterate(image_path):  
     img = Image.open(image_path).convert("RGB")
-    img.save('storage/images/temp.jpg')
     orig_width, orig_height = img.size
 
-    results = model_detect(image_path, imgsz=640, augment=False)[0]
+    results = model_detect(img, imgsz=640, augment=False)[0]
     boxes = results.boxes.xyxy.cpu().numpy()
 
     input_w, input_h = results.orig_shape[1], results.orig_shape[0]
