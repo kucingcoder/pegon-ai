@@ -130,11 +130,14 @@ def generate_qrcode():
 
     return send_file(buffer, mimetype='image/png')
 
+expired_pro()
+expired_plugin_pair()
 update_big_data()
+
 scheduler = BackgroundScheduler()
 scheduler.add_job(expired_pro, 'cron', hour=0, minute=0)
-scheduler.add_job(update_big_data, 'cron', hour=0, minute=0)
 scheduler.add_job(expired_plugin_pair, 'cron', hour=0, minute=0)
+scheduler.add_job(update_big_data, 'cron', hour=0, minute=0)
 scheduler.start()
 
 if __name__ == '__main__':

@@ -7,3 +7,4 @@ def expired_plugin_pair():
         expired_at__lt=now,
         user_id=None
     ).delete()
+    print('clear expired plugin pairs')
