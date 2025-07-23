@@ -19,7 +19,6 @@ model_vision = AutoModelForVision2Seq.from_pretrained(
 
 def image_transliterate(image_path):  
     img = Image.open(image_path)
-    img = ImageOps.exif_transpose(img).convert("RGB")
     orig_width, orig_height = img.size
 
     results = model_detect(img, imgsz=640, augment=False)[0]
