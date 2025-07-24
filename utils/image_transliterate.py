@@ -51,8 +51,12 @@ def image_transliterate(image_path):
 
     results = ""
 
-    for x1, y1, x2, y2 in adjusted_boxes:
+    for idx, (x1, y1, x2, y2) in enumerate(adjusted_boxes):
         cropped = img.crop((x1, y1, x2, y2))
+
+        # Save the cropped image
+        cropped_path = f"storage/cropped/crop_{idx+1}.png"
+        cropped.save(cropped_path)
 
         instruction = "You are a script converter that extracts Arabic Pegon text from images and converts it into Latin script."
 
