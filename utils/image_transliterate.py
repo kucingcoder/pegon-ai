@@ -1,6 +1,6 @@
 import torch
 from ultralytics import YOLO
-from PIL import Image, ImageOps
+from PIL import Image
 from transformers import AutoProcessor, AutoModelForVision2Seq
 
 torch.set_num_threads(torch.get_num_threads())
@@ -9,7 +9,7 @@ torch.set_num_interop_threads(torch.get_num_threads())
 model_detect = YOLO('storage/models/pegon-ai-detect.pt')
 padding = 4
 
-model_path = 'storage/models/pegon-ai-vision'
+model_path = 'storage/models/pegon-VL-256M'
 processor = AutoProcessor.from_pretrained(model_path)
 model_vision = AutoModelForVision2Seq.from_pretrained(
     model_path,
@@ -54,7 +54,7 @@ def image_transliterate(image_path):
     for x1, y1, x2, y2 in adjusted_boxes:
         cropped = img.crop((x1, y1, x2, y2))
 
-        instruction = "Extract the text written in Pegon script (Arabic script used for Javanese or Indonesian) from the image and convert it into Latin script. Follow phonetic transcription rules based on Javanese or Indonesian pronunciation. Maintain accurate word separation and preserve the original meaning. Output only the Latin-script transcription."
+        instruction = "You are a script converter that extracts Arabic Pegon text from images and converts it into Latin script."
 
         messages = [
             {
