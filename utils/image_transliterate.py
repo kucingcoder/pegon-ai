@@ -9,7 +9,7 @@ torch.set_num_interop_threads(torch.get_num_threads())
 model_detect = YOLO('storage/models/pegon-ai-detect.pt')
 padding = 4
 
-model_path = 'storage/models/pegon-VL-256M'
+model_path = 'storage/models/Pegon-Vision-256M'
 processor = AutoProcessor.from_pretrained(model_path)
 model_vision = AutoModelForVision2Seq.from_pretrained(
     model_path,
