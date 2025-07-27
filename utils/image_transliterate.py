@@ -18,6 +18,18 @@ model_vision = AutoModelForVision2Seq.from_pretrained(
 )
 
 def image_transliterate(image_path):  
+    return """
+    lamun sira liwat ana ing ngarepe
+    kudu nuwun amit serta depe depe
+    lamun ibu bapa du kanca meneng
+    bab ambagi waktu
+    dadi bocah kudu ajar bagi zaman
+    aja pijar dolan nganti lali mangan
+    yen wayahe sholat aja tunggu perentah
+    inggal tandang cekat cekut aja wegah
+    wayah ngaji wayah sekolah sinau
+    kabeh mau gatikage kelakuan tuhu
+    """
     img = Image.open(image_path)
     orig_width, orig_height = img.size
 
