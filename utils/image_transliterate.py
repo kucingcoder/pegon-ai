@@ -1,3 +1,5 @@
+import cv2
+import numpy as np
 import torch
 from ultralytics import YOLO
 from PIL import Image
@@ -16,6 +18,13 @@ model_vision = AutoModelForVision2Seq.from_pretrained(
     torch_dtype=torch.float32,
     device_map="cpu"
 )
+
+def threshold_pil_image(pil_img):
+    img_cv2 = cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR)
+    gray = cv2.cvtColor(img_cv2, cv2.COLOR_BGR2GRAY)
+    _, binary = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    binary_rgb = cv2.cvtColor(binary, cv2.COLOR_GRAY2RGB)
+    return Image.fromarray(binary_rgb)
 
 def image_transliterate(image_path):  
     img = Image.open(image_path)
@@ -53,6 +62,7 @@ def image_transliterate(image_path):
 
     for x1, y1, x2, y2 in adjusted_boxes:
         cropped = img.crop((x1, y1, x2, y2))
+        cropped = threshold_pil_image(cropped)
 
         instruction = "You are a script converter that extracts Arabic Pegon text from images and converts it into Latin script."
 
