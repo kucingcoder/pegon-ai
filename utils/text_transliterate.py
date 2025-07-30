@@ -14,10 +14,6 @@ llm = Llama(
 )
 
 def text_transliterate(text):
-    return """لَاڠِتْ سَاڠَتْ چٓرَهْ
-سَيَا سُوْكَا كَوْڤِيْ
-كُوْچِڠْ اِيْتُوْ تِيْدُرْ
-اَيَوْ كِيْتَا چَوْبَا"""
     user_input = text
 
     prompt = f"""<|im_start|>system
